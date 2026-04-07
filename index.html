@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estudio Bíblico: 1 Pedro 3</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <div class="header-content">
+                <h1>Estudio Bíblico: El Arca</h1>
+                <div class="progress-container">
+                    <div class="progress-segment" data-phase="1">Cimientos</div>
+                    <div class="progress-segment" data-phase="2">Muro</div>
+                    <div class="progress-segment" data-phase="3">Estructura</div>
+                    <div class="progress-segment" data-phase="4">El Arca</div>
+                </div>
+            </div>
+            <div class="humility-container">
+                <span>Linter de Humildad</span>
+                <div class="humility-bar-outer">
+                    <div id="humility-bar-inner" style="width: 100%;"></div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section class="visuals-section">
+                <div class="visual-card side-a">
+                    <h3>El Altar (Madera/Oro)</h3>
+                    <div id="altar-container" class="construction-container">
+                        <!-- SVG or Animated Divs for Altar -->
+                        <div class="altar-base"></div>
+                        <div class="altar-glow"></div>
+                    </div>
+                </div>
+                <div class="visual-card side-b">
+                    <h3>El Arca (Estructura/Brea)</h3>
+                    <div id="arca-container" class="construction-container">
+                        <!-- SVG or Animated Divs for Arca -->
+                        <div class="arca-skeleton"></div>
+                        <div class="arca-hull"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="study-section">
+                <div id="study-card" class="glass-card">
+                    <div id="card-header">
+                        <h2 id="phase-title">Cargando...</h2>
+                    </div>
+                    <div id="card-content">
+                        <!-- Questions will be injected here -->
+                    </div>
+                    <div id="card-footer">
+                        <div id="controls">
+                            <!-- Buttons will be injected here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <div id="overlay" class="hidden">
+            <div id="powerup-modal" class="glass-card">
+                <h2 id="powerup-word"></h2>
+                <p id="powerup-meaning"></p>
+                <button id="close-powerup">Continuar</button>
+            </div>
+        </div>
+
+        <div id="admin-controls">
+           <button id="btn-mala-conciencia" title="Mala Conciencia (Restar Humildad)">⚠️</button>
+        </div>
+    </div>
+    <script type="module" src="main.js"></script>
+</body>
+</html>
