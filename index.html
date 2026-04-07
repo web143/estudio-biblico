@@ -3,75 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Camino del Justo: 1 Pedro 3</title>
+    <title>The Sovereign Domain: 1 Pedro 3</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=Lora:ital,wght@0,400;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="tech-dark">
     <div id="app">
-        <header>
-            <div class="header-main">
-                <div class="brand">
-                    <h1>El Camino del Justo</h1>
-                    <p class="subtitle">Estudio Bíblico: 1 Pedro 3:8-22</p>
-                </div>
-                <div class="leaderboard">
-                    <div class="team team-a">
-                        <span class="team-label">Equipo A</span>
-                        <span id="score-a" class="score">0</span>
-                    </div>
-                    <div class="team-divider">VS</div>
-                    <div class="team team-b">
-                        <span id="score-b" class="score">0</span>
-                        <span class="team-label">Equipo B</span>
-                    </div>
-                </div>
+        <aside id="leaderboard-sidebar">
+            <div class="sidebar-header">
+                <h2>Leaderboard</h2>
+                <div class="system-status">SYSTEM ACTIVE</div>
             </div>
-            <nav class="progress-nav">
-                <div class="progress-bar-container">
-                    <div class="progress-segment" data-idx="0">1</div>
-                    <div class="progress-segment" data-idx="1">2</div>
-                    <div class="progress-segment" data-idx="2">3</div>
-                    <div class="progress-segment" data-idx="3">4</div>
-                    <div class="progress-segment" data-idx="4">5</div>
-                    <div class="progress-segment" data-idx="5">6</div>
+            <div class="team-container team-a">
+                <div class="team-info">
+                    <span class="team-tag">TEAM ALPHA</span>
+                    <span id="score-a" class="team-score">0000</span>
                 </div>
-            </nav>
-        </header>
+                <div class="power-bar"><div id="power-a" class="power-level" style="width: 0%;"></div></div>
+            </div>
+            <div class="team-container team-b">
+                <div class="team-info">
+                    <span class="team-tag">TEAM BRAVO</span>
+                    <span id="score-b" class="team-score">0000</span>
+                </div>
+                <div class="power-bar"><div id="power-b" class="power-level" style="width: 0%;"></div></div>
+            </div>
+            <div class="conquest-summary">
+                <h3>Nodes Captured</h3>
+                <div id="node-stats">0 / 6</div>
+            </div>
+        </aside>
 
-        <main>
-            <section id="game-section">
-                <div id="study-card" class="glass-card">
-                    <div class="card-meta">
-                        <span id="current-verses">Versículos 3:8-9</span>
-                    </div>
-                    <div id="card-body">
-                        <h2 id="current-question">Cargando pregunta...</h2>
-                    </div>
-                    <div id="card-footer">
-                        <!-- Control buttons injected here -->
-                    </div>
-                </div>
-            </section>
+        <main id="command-center">
+            <header class="main-header">
+                <h1>The Sovereign Domain</h1>
+                <div class="session-info">1 PEDRO 3:8-22 // HACKING BIBLE CONTEXT</div>
+            </header>
+
+            <div id="sovereign-map">
+                <svg id="map-svg" viewBox="0 0 800 500">
+                    <!-- Connection lines will be injected here -->
+                    <g id="map-lines"></g>
+                    <!-- Nodes will be injected here -->
+                    <g id="map-nodes"></g>
+                </svg>
+            </div>
+
+            <footer class="action-bar">
+                <div id="current-action-label">Ready for Assault...</div>
+            </footer>
         </main>
 
+        <!-- Dynamic Overlays -->
         <div id="overlay" class="hidden">
-            <div id="reward-modal" class="glass-card">
-                <div class="modal-header">
-                    <div class="icon">✨</div>
-                    <h3>Caja de Sabiduría</h3>
+            <!-- Concept Modal (Assault/Consolidation/Hack) -->
+            <div id="action-modal" class="glass-card">
+                <div id="modal-type-indicator">ASSAULT</div>
+                <div id="modal-verse">NODE // 1 PEDRO 3:8-9</div>
+                <div id="modal-question" class="tech-text"></div>
+                <div id="modal-controls">
+                    <!-- Dynamically injected buttons -->
                 </div>
-                <div id="reward-content" class="serif-text">
-                    <!-- Theological explanation injected here -->
+            </div>
+
+            <!-- Reading Mode Overlay -->
+            <div id="reading-mode" class="hidden">
+                <div class="reading-header">
+                    <div class="icon">📖</div>
+                    <h3>Sovereign Commentary</h3>
                 </div>
-                <button id="close-reward" class="btn-next">Continuar el Camino</button>
+                <div id="reading-content" class="serif-text"></div>
+                <button id="close-reading" class="btn-tech">Acknowledge Explanation</button>
             </div>
         </div>
 
-        <div id="admin-tools">
-            <button id="btn-reset" title="Reiniciar Juego">🔄</button>
+        <div id="admin-panel">
+            <button id="btn-reset" title="Full System Reset">⟳</button>
         </div>
     </div>
     <script type="module" src="main.js"></script>
