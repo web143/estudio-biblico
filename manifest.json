@@ -1,0 +1,17 @@
+{
+  "name": "Quiz Bíblico — 1 Pedro 3",
+  "short_name": "Quiz Bíblico",
+  "description": "Juego interactivo de estudio bíblico.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f0f4ff",
+  "theme_color": "#7c5cfc",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

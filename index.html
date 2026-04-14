@@ -5,10 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quiz Bíblico — 1 Pedro 3</title>
 <meta name="description" content="Quiz interactivo de estudio bíblico por equipos. 1 Pedro 3:8-22.">
-
-
-
-  <!-- OFFLINE FONT INJECTION -->
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icon.svg">
+<meta name="theme-color" content="#7c5cfc">
+<link rel="apple-touch-icon" href="./icon.svg">
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW fail: ', err));
+    });
+  }
+</script>  <!-- OFFLINE FONT INJECTION -->
   <style>
   @font-face {
     font-family: 'Nunito';
