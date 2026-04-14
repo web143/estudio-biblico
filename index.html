@@ -1021,6 +1021,45 @@ const state = {
 };
 
 // ═══════════════════════════════════════════════════
+//  AUDIO / SOUNDS
+// ═══════════════════════════════════════════════════
+const getAudioCtx = () => {
+  if (!window._aCtx) window._aCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (window._aCtx.state === 'suspended') window._aCtx.resume();
+  return window._aCtx;
+};
+
+function playSound(type) {
+  try {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    
+    if (type === 'correct') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(600, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
+      gain.gain.setValueAtTime(0, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.5);
+    } else {
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(150, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(90, ctx.currentTime + 0.3);
+      gain.gain.setValueAtTime(0, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.4);
+    }
+  } catch(e) { console.warn('Audio no soportado', e); }
+}
+
+// ═══════════════════════════════════════════════════
 //  UTILS
 // ═══════════════════════════════════════════════════
 const $ = id => document.getElementById(id);
@@ -1200,12 +1239,15 @@ function showVersePanel(result) {
   label.className = 'verdict-label';
 
   if (result === 'correct') {
+    playSound('correct');
     badge.textContent = '✓'; badge.classList.add('vb-correct');
     label.textContent = '¡Correcto!'; label.classList.add('vl-correct');
   } else if (result === 'wrong') {
+    playSound('wrong');
     badge.textContent = '✗'; badge.classList.add('vb-wrong');
     label.textContent = 'Incorrecto'; label.classList.add('vl-wrong');
   } else {
+    playSound('wrong');
     badge.textContent = '⏱'; badge.classList.add('vb-timeout');
     label.textContent = '¡Tiempo!'; label.classList.add('vl-timeout');
   }
