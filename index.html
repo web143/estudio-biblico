@@ -1,88 +1,1302 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Sovereign Domain: 1 Pedro 3</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=Lora:ital,wght@0,400;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Bíblico — 1 Pedro 3</title>
+<meta name="description" content="Quiz interactivo de estudio bíblico por equipos. 1 Pedro 3:8-22.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   TOKENS
+══════════════════════════════════════════ */
+:root {
+  --bg:       #f0f4ff;
+  --surface:  #ffffff;
+  --border:   #e8edf8;
+
+  --pink:     #ff5c8a;
+  --pink-lt:  #fff0f4;
+  --pink-sh:  rgba(255,92,138,0.18);
+
+  --cyan:     #00c6c6;
+  --cyan-lt:  #e8fffe;
+  --cyan-sh:  rgba(0,198,198,0.18);
+
+  --yellow:   #ffc107;
+  --yellow-lt:#fffbea;
+  --yellow-sh:rgba(255,193,7,0.2);
+
+  --purple:   #7c5cfc;
+  --purple-lt:#f0ecff;
+  --purple-sh:rgba(124,92,252,0.2);
+
+  --green:    #22c55e;
+  --red:      #ef4444;
+
+  --text:     #1e2340;
+  --sub:      #8690b0;
+  --muted:    #c0c7df;
+
+  --ff: 'Nunito', sans-serif;
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; }
+
+body {
+  font-family: var(--ff);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+.hidden { display: none !important; }
+
+/* ═══════════════════════════════════════════
+   SCREEN WRAPPER
+══════════════════════════════════════════ */
+.screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ═══════════════════════════════════════════
+   SCORE BAR — always at top
+══════════════════════════════════════════ */
+.score-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: var(--surface);
+  box-shadow: 0 2px 16px rgba(30,35,64,0.07);
+  position: sticky; top: 0; z-index: 50;
+  border-bottom: 2px solid var(--border);
+}
+
+.team-pill {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 2rem;
+  font-weight: 800;
+  font-size: 0.95rem;
+  transition: transform 0.15s;
+}
+.team-pill-a { background: var(--pink-lt); color: var(--pink); }
+.team-pill-b { background: var(--cyan-lt); color: var(--cyan); }
+
+.team-name { flex: 1; font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; }
+
+.btn-pts {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  background: transparent;
+  color: inherit;
+  font-size: 1.1rem; font-weight: 900;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+  display: grid; place-items: center;
+  line-height: 1;
+  font-family: var(--ff);
+}
+.btn-pts:hover  { background: currentColor; color: #fff; transform: scale(1.1); }
+.btn-pts:active { transform: scale(0.95); }
+
+.score-num {
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: -1px;
+  min-width: 48px;
+  text-align: center;
+  transition: transform 0.2s var(--ease-bounce);
+}
+.score-num.pop { animation: scorePop 0.35s var(--ease-bounce); }
+@keyframes scorePop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.45); }
+  100% { transform: scale(1); }
+}
+
+.vs-badge {
+  font-size: 0.7rem; font-weight: 900;
+  letter-spacing: 2px;
+  color: var(--muted);
+  padding: 0 4px;
+}
+
+/* ═══════════════════════════════════════════
+   BOARD HEADER
+══════════════════════════════════════════ */
+.board-header {
+  text-align: center;
+  padding: 28px 20px 10px;
+}
+.board-header h1 {
+  font-size: 1.8rem; font-weight: 900;
+  color: var(--text);
+}
+.board-header h1 span { color: var(--pink); }
+.board-header p {
+  font-size: 0.9rem; color: var(--sub);
+  margin-top: 4px; font-weight: 600;
+}
+
+/* ═══════════════════════════════════════════
+   QUESTION BOARD — 22 uniform tiles
+══════════════════════════════════════════ */
+.board-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 16px 0;
+}
+
+.question-board {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 20px;
+  width: 100%;
+  max-width: 740px;
+}
+
+.tile {
+  aspect-ratio: 1;
+  border-radius: 1.2rem;
+  display: grid;
+  place-items: center;
+  font-size: 1.6rem;
+  font-weight: 900;
+  cursor: pointer;
+  background: var(--surface);
+  color: var(--purple);
+  border: 2.5px solid var(--border);
+  box-shadow: 0 4px 12px rgba(30,35,64,0.07);
+  transition: transform 0.2s var(--ease-bounce), box-shadow 0.2s, border-color 0.2s, background 0.2s;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+.tile::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.5), transparent 65%);
+  pointer-events: none;
+}
+.tile:hover {
+  transform: translateY(-5px) scale(1.08);
+  border-color: var(--purple);
+  box-shadow: 0 12px 28px var(--purple-sh);
+  background: var(--purple-lt);
+}
+.tile:active { transform: scale(0.95); }
+
+.tile.done {
+  background: var(--border);
+  border-color: transparent;
+  color: var(--muted);
+  cursor: default;
+  pointer-events: none;
+  box-shadow: none;
+  transform: scale(0.9);
+}
+.tile.done::before {
+  content: '✓';
+  position: absolute;
+  font-size: 1rem;
+  color: var(--green);
+  top: 2px; right: 5px;
+  font-weight: 900;
+}
+
+/* ═══════════════════════════════════════════
+   BOARD FOOTER
+══════════════════════════════════════════ */
+.board-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  flex-wrap: wrap;
+}
+
+.progress-chip {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 2rem;
+  padding: 6px 18px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--sub);
+  box-shadow: 0 2px 8px rgba(30,35,64,0.06);
+}
+
+.btn-reset {
+  background: var(--yellow-lt);
+  border: 2px solid var(--yellow);
+  border-radius: 2rem;
+  padding: 7px 20px;
+  font-family: var(--ff);
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #b45309;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  display: flex; align-items: center; gap: 6px;
+}
+.btn-reset:hover { background: var(--yellow); color: #fff; transform: scale(1.04); }
+
+/* ═══════════════════════════════════════════
+   QUESTION SCREEN
+══════════════════════════════════════════ */
+.q-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px 40px;
+  gap: 16px;
+}
+
+/* Question number bubble */
+.q-bubble {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.q-num-badge {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--purple);
+  color: #fff;
+  display: grid; place-items: center;
+  font-size: 1.1rem; font-weight: 900;
+  box-shadow: 0 4px 14px var(--purple-sh);
+}
+.q-heading {
+  font-size: 0.8rem; font-weight: 800;
+  color: var(--sub); letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* Card */
+.q-card {
+  background: var(--surface);
+  border-radius: 2rem;
+  padding: 32px 36px;
+  box-shadow: 0 8px 40px rgba(30,35,64,0.1), 0 2px 8px rgba(30,35,64,0.06);
+  width: 100%; max-width: 660px;
+  border: 2px solid var(--border);
+}
+
+.question-text {
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.5;
+  color: var(--text);
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+/* Phases */
+.phase { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+
+/* ── Phase 1 hint ── */
+.phase-hint {
+  font-size: 0.82rem; font-weight: 700;
+  color: var(--sub); text-align: center;
+  background: var(--bg); border-radius: 1rem;
+  padding: 8px 18px;
+}
+
+/* ── Show Options button ── */
+.btn-show {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 15px 36px;
+  background: linear-gradient(135deg, var(--pink), #c2185b);
+  color: #fff;
+  font-family: var(--ff); font-size: 1rem; font-weight: 800;
+  border: none; border-radius: 2rem;
+  cursor: pointer;
+  box-shadow: 0 6px 20px var(--pink-sh);
+  transition: transform 0.2s var(--ease-bounce), box-shadow 0.2s;
+}
+.btn-show:hover  { transform: translateY(-3px) scale(1.04); box-shadow: 0 10px 28px var(--pink-sh); }
+.btn-show:active { transform: scale(0.97); }
+.btn-show svg { flex-shrink: 0; }
+
+/* ── Timer ── */
+.timer-wrap {
+  position: relative; width: 80px; height: 80px;
+  display: grid; place-items: center;
+}
+.ring-svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+.ring-bg   { fill: none; stroke: var(--border); stroke-width: 7; }
+.ring-prog {
+  fill: none; stroke: var(--cyan); stroke-width: 7;
+  stroke-linecap: round;
+  stroke-dasharray: 251;   /* 2π × 40 (r=40) */
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1s linear, stroke 0.4s;
+}
+.ring-prog.danger { stroke: var(--red); }
+.timer-text {
+  font-size: 1.4rem; font-weight: 900;
+  color: var(--cyan); position: relative;
+  transition: color 0.4s;
+}
+.timer-text.danger { color: var(--red); }
+
+/* ── Options list ── */
+.options-list {
+  display: flex; flex-direction: column;
+  gap: 10px; width: 100%;
+}
+.options-list.bool-mode {
+  flex-direction: row; gap: 14px;
+}
+
+/* Option buttons — staggered pop-in */
+.btn-opt {
+  width: 100%;
+  padding: 14px 20px;
+  text-align: left;
+  background: var(--bg);
+  border: 2.5px solid var(--border);
+  color: var(--text);
+  font-family: var(--ff); font-size: 0.95rem; font-weight: 700;
+  border-radius: 1.2rem;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, transform 0.2s var(--ease-bounce);
+
+  /* pop-in */
+  opacity: 0;
+  transform: scale(0.7) translateY(10px);
+  animation: optPop 0.4s var(--ease-bounce) forwards;
+}
+.btn-opt:nth-child(1) { animation-delay: 0.05s; }
+.btn-opt:nth-child(2) { animation-delay: 0.13s; }
+.btn-opt:nth-child(3) { animation-delay: 0.21s; }
+
+@keyframes optPop {
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.btn-opt:hover:not(:disabled) {
+  border-color: var(--purple);
+  background: var(--purple-lt);
+  color: var(--purple);
+  transform: translateY(-2px) scale(1.02);
+}
+.btn-opt:active:not(:disabled) { transform: scale(0.98); }
+.btn-opt:disabled { cursor: default; }
+
+.bool-mode .btn-opt { text-align: center; font-size: 1.1rem; font-weight: 900; }
+
+/* Result states */
+.opt-correct {
+  border-color: var(--green) !important;
+  background: #f0fdf4 !important;
+  color: #166534 !important;
+}
+.opt-wrong {
+  border-color: var(--red) !important;
+  background: #fff5f5 !important;
+  color: var(--red) !important;
+  opacity: 0.65;
+}
+
+/* ── Phase 3: Verse reveal ── */
+.verdict-row {
+  display: flex; align-items: center; gap: 12px;
+  animation: slideDown 0.4s var(--ease-bounce);
+}
+@keyframes slideDown {
+  from { transform: translateY(-16px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+.verdict-badge {
+  width: 52px; height: 52px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: 1.5rem; font-weight: 900; border: 3px solid;
+  animation: popIn 0.4s var(--ease-bounce);
+}
+@keyframes popIn {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+.vb-correct { background: #f0fdf4; border-color: var(--green); color: var(--green); box-shadow: 0 4px 14px rgba(34,197,94,0.25); }
+.vb-wrong   { background: #fff5f5; border-color: var(--red); color: var(--red); box-shadow: 0 4px 14px rgba(239,68,68,0.25); }
+.vb-timeout { background: var(--yellow-lt); border-color: var(--yellow); color: #b45309; box-shadow: 0 4px 14px var(--yellow-sh); }
+
+.verdict-label { font-size: 1rem; font-weight: 900; }
+.vl-correct { color: var(--green); }
+.vl-wrong   { color: var(--red); }
+.vl-timeout { color: #b45309; }
+
+/* Verse box */
+.verse-box {
+  background: linear-gradient(135deg, var(--cyan-lt), #e8f4ff);
+  border: 2px solid #b2ebf2;
+  border-radius: 1.5rem;
+  padding: 22px 24px;
+  width: 100%;
+  animation: fadeUp 0.4s 0.1s var(--ease-out) both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.verse-ref {
+  font-size: 0.72rem; font-weight: 800; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--cyan);
+  margin-bottom: 10px;
+}
+.verse-body {
+  font-size: 0.97rem; font-weight: 700;
+  line-height: 1.7; color: var(--text);
+  font-style: italic;
+}
+
+/* Back button */
+.btn-back {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 26px;
+  background: var(--surface);
+  border: 2.5px solid var(--border);
+  border-radius: 2rem;
+  font-family: var(--ff); font-size: 0.9rem; font-weight: 800;
+  color: var(--sub);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, transform 0.15s;
+}
+.btn-back:hover { border-color: var(--pink); color: var(--pink); transform: scale(1.03); }
+
+/* Back arrow in header */
+.btn-icon-round {
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--surface); color: var(--sub);
+  display: grid; place-items: center;
+  font-size: 1rem; cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.btn-icon-round:hover { border-color: var(--pink); color: var(--pink); }
+
+/* ═══════════════════════════════════════════
+   QUESTION SCREEN HEADER
+══════════════════════════════════════════ */
+.q-screen-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px;
+  background: var(--surface);
+  border-bottom: 2px solid var(--border);
+  box-shadow: 0 2px 12px rgba(30,35,64,0.05);
+}
+.q-screen-title {
+  font-size: 0.85rem; font-weight: 900;
+  color: var(--sub); letter-spacing: 1px; text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════ */
+@media (max-width: 720px) {
+  .question-board { grid-template-columns: repeat(5, 1fr); gap: 14px; }
+  .q-card { padding: 24px 18px; border-radius: 1.5rem; }
+  .question-text { font-size: 1.05rem; }
+  .score-bar { padding: 10px 12px; gap: 8px; }
+  .score-num { font-size: 1.3rem; }
+}
+@media (max-width: 420px) {
+  .question-board { grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .tile { border-radius: 0.9rem; font-size: 1.3rem; }
+}
+
+/* ═══════════════════════════════════════════
+   WELCOME SCREEN
+══════════════════════════════════════════ */
+#screen-welcome {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 20px 40px;
+  gap: 0;
+  background: var(--bg);
+  position: relative;
+  overflow: hidden;
+}
+
+/* floating blobs */
+#screen-welcome::before,
+#screen-welcome::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+}
+#screen-welcome::before {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(255,92,138,0.15), transparent 70%);
+  top: -80px; left: -80px;
+}
+#screen-welcome::after {
+  width: 360px; height: 360px;
+  background: radial-gradient(circle, rgba(0,198,198,0.15), transparent 70%);
+  bottom: -60px; right: -60px;
+}
+
+.welcome-inner {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 28px;
+  width: 100%; max-width: 520px;
+}
+
+/* Logo / Title */
+.welcome-logo {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  animation: wFadeDown 0.6s var(--ease-out) both;
+}
+@keyframes wFadeDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.welcome-emoji {
+  font-size: 4rem;
+  filter: drop-shadow(0 8px 16px rgba(124,92,252,0.3));
+  animation: floatBob 3s ease-in-out infinite;
+}
+@keyframes floatBob {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
+}
+.welcome-title {
+  font-size: 2.2rem; font-weight: 900;
+  color: var(--text); letter-spacing: -1px;
+  text-align: center;
+}
+.welcome-title span { color: var(--purple); }
+.welcome-sub {
+  font-size: 0.88rem; font-weight: 700;
+  color: var(--sub); letter-spacing: 1px;
+  text-align: center;
+}
+
+/* Decorative floating emojis */
+.deco {
+  position: absolute; font-size: 1.8rem;
+  animation: floatBob 4s ease-in-out infinite;
+  pointer-events: none; z-index: 0; opacity: 0.5;
+}
+.deco-1 { top: 12%; left: 6%;  animation-delay: 0s; }
+.deco-2 { top: 18%; right: 8%; animation-delay: 0.8s; font-size: 1.4rem; }
+.deco-3 { bottom: 22%; left: 5%; animation-delay: 1.2s; font-size: 1.3rem; }
+.deco-4 { bottom: 18%; right: 6%; animation-delay: 0.4s; }
+
+/* Team input cards */
+.teams-row {
+  display: flex; gap: 14px; width: 100%;
+  animation: wFadeUp 0.6s 0.15s var(--ease-out) both;
+}
+@keyframes wFadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.team-input-card {
+  flex: 1;
+  background: var(--surface);
+  border-radius: 1.8rem;
+  padding: 22px 18px 20px;
+  box-shadow: 0 6px 28px rgba(30,35,64,0.09);
+  border: 2.5px solid var(--border);
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.team-input-card:focus-within {
+  box-shadow: 0 8px 32px rgba(30,35,64,0.15);
+}
+
+.team-input-card.card-a:focus-within { border-color: var(--pink); }
+.team-input-card.card-b:focus-within { border-color: var(--cyan); }
+
+.card-avatar {
+  width: 54px; height: 54px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: 1.7rem;
+  box-shadow: 0 4px 14px rgba(30,35,64,0.1);
+}
+.card-a .card-avatar { background: var(--pink-lt); }
+.card-b .card-avatar { background: var(--cyan-lt); }
+
+.card-label {
+  font-size: 0.7rem; font-weight: 800;
+  letter-spacing: 2px; text-transform: uppercase;
+}
+.card-a .card-label { color: var(--pink); }
+.card-b .card-label { color: var(--cyan); }
+
+.team-name-input {
+  width: 100%;
+  padding: 11px 16px;
+  border-radius: 1rem;
+  border: 2px solid var(--border);
+  background: var(--bg);
+  font-family: var(--ff);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text);
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.team-name-input::placeholder { color: var(--muted); font-weight: 700; }
+.card-a .team-name-input:focus { border-color: var(--pink); box-shadow: 0 0 0 3px var(--pink-sh); }
+.card-b .team-name-input:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px var(--cyan-sh); }
+
+/* Start button */
+.btn-start {
+  width: 100%;
+  padding: 17px;
+  border: none; border-radius: 2rem;
+  background: linear-gradient(135deg, var(--purple), #5b21b6);
+  color: #fff;
+  font-family: var(--ff); font-size: 1.05rem; font-weight: 900;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px var(--purple-sh);
+  transition: transform 0.2s var(--ease-bounce), box-shadow 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  animation: wFadeUp 0.6s 0.3s var(--ease-out) both;
+}
+.btn-start:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 14px 32px var(--purple-sh);
+}
+.btn-start:active { transform: scale(0.97); }
+
+.welcome-footnote {
+  font-size: 0.75rem; font-weight: 700;
+  color: var(--muted); text-align: center;
+  animation: wFadeUp 0.6s 0.4s var(--ease-out) both;
+}
+</style>
 </head>
-<body class="tech-dark">
-    <div id="app">
-        <aside id="leaderboard-sidebar">
-            <div class="sidebar-header">
-                <h2>Leaderboard</h2>
-                <div class="system-status">SYSTEM ACTIVE</div>
-            </div>
-            <div class="team-container team-a">
-                <div class="team-info">
-                    <span class="team-tag">TEAM ALPHA</span>
-                    <span id="score-a" class="team-score">0000</span>
-                </div>
-                <div class="power-bar"><div id="power-a" class="power-level" style="width: 0%;"></div></div>
-            </div>
-            <div class="team-container team-b">
-                <div class="team-info">
-                    <span class="team-tag">TEAM BRAVO</span>
-                    <span id="score-b" class="team-score">0000</span>
-                </div>
-                <div class="power-bar"><div id="power-b" class="power-level" style="width: 0%;"></div></div>
-            </div>
-            <div class="conquest-summary">
-                <h3>Nodes Captured</h3>
-                <div id="node-stats">0 / 6</div>
-            </div>
-        </aside>
+<body>
 
-        <main id="command-center">
-            <header class="main-header">
-                <h1>The Sovereign Domain</h1>
-                <div class="session-info">1 PEDRO 3:8-22 // HACKING BIBLE CONTEXT</div>
-            </header>
+<!-- ═══════════════════════════════════════════════════
+     SCREEN 0 — BIENVENIDA / NOMBRES
+════════════════════════════════════════════════════ -->
+<div id="screen-welcome" class="hidden">
 
-            <div id="sovereign-map">
-                <svg id="map-svg" viewBox="0 0 800 500">
-                    <!-- Connection lines will be injected here -->
-                    <g id="map-lines"></g>
-                    <!-- Nodes will be injected here -->
-                    <g id="map-nodes"></g>
-                </svg>
-            </div>
+  <!-- Floating decorations -->
+  <div class="deco deco-1">✨</div>
+  <div class="deco deco-2">🎯</div>
+  <div class="deco deco-3">⚡</div>
+  <div class="deco deco-4">🌟</div>
 
-            <footer class="action-bar">
-                <div id="current-action-label">Ready for Assault...</div>
-            </footer>
-        </main>
+  <div class="welcome-inner">
 
-        <!-- Dynamic Overlays -->
-        <div id="overlay" class="hidden">
-            <!-- Concept Modal (Assault/Consolidation/Hack) -->
-            <div id="action-modal" class="glass-card">
-                <div id="modal-type-indicator">ASSAULT</div>
-                <div id="modal-verse">NODE // 1 PEDRO 3:8-9</div>
-                <div id="modal-question" class="tech-text"></div>
-                <div id="modal-controls">
-                    <!-- Dynamically injected buttons -->
-                </div>
-            </div>
-
-            <!-- Reading Mode Overlay -->
-            <div id="reading-mode" class="hidden">
-                <div class="reading-header">
-                    <div class="icon">📖</div>
-                    <h3>Sovereign Commentary</h3>
-                </div>
-                <div id="reading-content" class="serif-text"></div>
-                <button id="close-reading" class="btn-tech">Acknowledge Explanation</button>
-            </div>
-        </div>
-
-        <div id="admin-panel">
-            <button id="btn-reset" title="Full System Reset">⟳</button>
-        </div>
+    <!-- Logo -->
+    <div class="welcome-logo">
+      <div class="welcome-emoji">📖</div>
+      <div class="welcome-title">Quiz <span>Bíblico</span></div>
+      <div class="welcome-sub">1 PEDRO 3:8–22 · ESTUDIO POR EQUIPOS</div>
     </div>
-    <script type="module" src="main.js"></script>
+
+    <!-- Team name inputs -->
+    <div class="teams-row">
+      <div class="team-input-card card-a">
+        <div class="card-avatar">⚡</div>
+        <div class="card-label">Equipo A</div>
+        <input
+          id="input-team-a"
+          class="team-name-input"
+          type="text"
+          maxlength="16"
+          placeholder="Ej: Los Leones"
+          autocomplete="off"
+        />
+      </div>
+
+      <div class="team-input-card card-b">
+        <div class="card-avatar">🔥</div>
+        <div class="card-label">Equipo B</div>
+        <input
+          id="input-team-b"
+          class="team-name-input"
+          type="text"
+          maxlength="16"
+          placeholder="Ej: Los Águilas"
+          autocomplete="off"
+        />
+      </div>
+    </div>
+
+    <!-- Start button -->
+    <button id="btn-start" class="btn-start">
+      🚀 ¡Comenzar Quiz!
+    </button>
+
+    <div class="welcome-footnote">22 preguntas · Timer 20s · Reina Valera 1960</div>
+
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════
+     SCREEN A — TABLERO
+════════════════════════════════════════════════════ -->
+<div id="screen-board" class="screen">
+
+  <!-- Score bar (sticky top) -->
+  <div class="score-bar">
+    <div class="team-pill team-pill-a">
+      <div class="team-name" id="a1-name">Equipo A</div>
+      <button class="btn-pts" id="a1-minus">−</button>
+      <div class="score-num" id="a1-score">0</div>
+      <button class="btn-pts" id="a1-plus">+</button>
+    </div>
+
+    <div class="vs-badge">VS</div>
+
+    <div class="team-pill team-pill-b">
+      <button class="btn-pts" id="b1-minus">−</button>
+      <div class="score-num" id="b1-score">0</div>
+      <button class="btn-pts" id="b1-plus">+</button>
+      <div class="team-name" style="text-align:right" id="b1-name">Equipo B</div>
+    </div>
+  </div>
+
+  <!-- Heading -->
+  <div class="board-header">
+    <h1>Quiz <span>Bíblico</span> 📖</h1>
+    <p>1 Pedro 3:8–22 · Elige un número para empezar</p>
+  </div>
+
+  <!-- 22-tile board -->
+  <div class="board-wrap">
+    <div id="question-board" class="question-board"></div>
+  </div>
+
+  <!-- Footer -->
+  <div class="board-footer">
+    <div class="progress-chip" id="progress-chip">0 / 22 respondidas</div>
+    <button class="btn-reset" id="btn-reset">↺ Reiniciar</button>
+  </div>
+
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════
+     SCREEN B — PREGUNTA
+════════════════════════════════════════════════════ -->
+<div id="screen-question" class="screen hidden">
+
+  <!-- Score bar (always visible) -->
+  <div class="score-bar">
+    <div class="team-pill team-pill-a">
+      <div class="team-name" id="a2-name">Equipo A</div>
+      <button class="btn-pts" id="a2-minus">−</button>
+      <div class="score-num" id="a2-score">0</div>
+      <button class="btn-pts" id="a2-plus">+</button>
+    </div>
+    <div class="vs-badge">VS</div>
+    <div class="team-pill team-pill-b">
+      <button class="btn-pts" id="b2-minus">−</button>
+      <div class="score-num" id="b2-score">0</div>
+      <button class="btn-pts" id="b2-plus">+</button>
+      <div class="team-name" style="text-align:right" id="b2-name">Equipo B</div>
+    </div>
+  </div>
+
+  <!-- Mini header row -->
+  <div class="q-screen-header">
+    <button class="btn-icon-round" id="btn-back-top" title="Volver al tablero">←</button>
+    <div class="q-screen-title">1 Pedro 3:8–22</div>
+    <div style="width:38px"></div>
+  </div>
+
+  <!-- Question content -->
+  <div class="q-container">
+    <div class="q-bubble">
+      <div class="q-num-badge" id="q-num-badge">1</div>
+      <div class="q-heading">Pregunta</div>
+    </div>
+
+    <div class="q-card">
+      <p class="question-text" id="question-text">...</p>
+
+      <!-- Phase 1: Mostrar Opciones -->
+      <div id="phase-1" class="phase">
+        <div class="phase-hint">💬 Lee la pregunta en voz alta al grupo</div>
+        <button id="btn-mostrar" class="btn-show">
+          Mostrar Opciones
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Phase 2: Timer + Options -->
+      <div id="phase-2" class="phase hidden">
+        <div class="timer-wrap">
+          <svg class="ring-svg" viewBox="0 0 90 90">
+            <circle class="ring-bg"   cx="45" cy="45" r="40"/>
+            <circle class="ring-prog" id="ring-prog" cx="45" cy="45" r="40"/>
+          </svg>
+          <span class="timer-text" id="timer-text">20</span>
+        </div>
+        <div class="options-list" id="options-list"></div>
+      </div>
+
+      <!-- Phase 3: Verse Reveal -->
+      <div id="phase-3" class="phase hidden">
+        <div class="verdict-row">
+          <div class="verdict-badge" id="verdict-badge">✓</div>
+          <div class="verdict-label" id="verdict-label">¡Correcto!</div>
+        </div>
+        <div class="verse-box">
+          <div class="verse-ref" id="verse-ref">1 Pedro 3</div>
+          <p class="verse-body" id="verse-body">Texto...</p>
+        </div>
+        <button class="btn-back" id="btn-volver">← Volver al Tablero</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<script>
+// ═══════════════════════════════════════════════════
+//  DATABASE (22 preguntas con versículos completos)
+// ═══════════════════════════════════════════════════
+const DB = [
+  { id:1, q:"¿Qué implica realmente 'santificar a Dios el Señor' en el corazón (v. 15)?",
+    o:["A) Apartarse de toda actividad social.","B) Reconocer a Cristo como Soberano absoluto de nuestra vida.","C) Repetir oraciones de santidad antes de cada servicio."],
+    c:1, ref:"1 Pedro 3:15",
+    v:"1 Pedro 3:15 — «Sino santificad a Dios el Señor en vuestros corazones, y estad siempre preparados para presentar defensa con mansedumbre y reverencia ante todo el que os demande razón de la esperanza que hay en vosotros.»" },
+
+  { id:2, q:"¿Cuál es el propósito del sacrificio de Cristo según el v. 18?",
+    o:["A) Llevarnos a Dios, muriendo el justo por los injustos.","B) Darnos un ejemplo de moral para ser mejores ciudadanos.","C) Calmar la ira de los gobernantes de la época."],
+    c:0, ref:"1 Pedro 3:18",
+    v:"1 Pedro 3:18 — «Porque también Cristo padeció una sola vez por los pecados, el justo por los injustos, para llevarnos a Dios, siendo a la verdad muerto en la carne, pero vivificado en espíritu.»" },
+
+  { id:3, q:"Según el v. 8, ¿qué significa tener un 'mismo sentir'?",
+    o:["A) Estar de acuerdo en todas las opiniones personales.","B) Ignorar las faltas de los demás para evitar el conflicto.","C) Buscar la armonía basada en el amor fraternal y la compasión."],
+    c:2, ref:"1 Pedro 3:8",
+    v:"1 Pedro 3:8 — «Finalmente, sed todos de un mismo sentir, compasivos, amándoos fraternalmente, misericordiosos, amigables.»" },
+
+  { id:4, q:"Según el v. 21, ¿qué es el bautismo para el creyente?",
+    o:["A) La aspiración de una buena conciencia hacia Dios.","B) El rito físico que quita las manchas de la carne.","C) Una tradición necesaria para ser aceptado por los hombres."],
+    c:0, ref:"1 Pedro 3:21",
+    v:"1 Pedro 3:21 — «El bautismo que ahora corresponde nos salva (no quitando las inmundicias de la carne, sino como la aspiración de una buena conciencia hacia Dios) por la resurrección de Jesucristo.»" },
+
+  { id:5, q:"¿Qué representa el Arca de Noé en el contexto del pasaje (v. 20)?",
+    o:["A) La justicia propia de Noé.","B) Un refugio temporal frente al clima.","C) Cristo como el único refugio ante el juicio de Dios."],
+    c:2, ref:"1 Pedro 3:20",
+    v:"1 Pedro 3:20 — «Los que en otro tiempo desobedecieron, cuando esperaba la paciencia de Dios en los días de Noé, mientras se preparaba el arca, en la cual pocas personas, es decir, ocho, fueron salvadas por agua.»" },
+
+  { id:6, q:"¿Qué debe hacer quien desea amar la vida y ver días buenos (v. 10)?",
+    o:["A) Refrenar su lengua del mal y sus labios del engaño.","B) Asegurarse de tener éxito y prosperidad material.","C) Orar mucho para que los demás cambien."],
+    c:0, ref:"1 Pedro 3:10",
+    v:"1 Pedro 3:10 — «Porque: El que quiere amar la vida y ver días buenos, refrene su lengua de mal, y sus labios no hablen engaño.»" },
+
+  { id:7, q:"¿Cuál es el enfoque de la 'apología' o defensa (v. 15)?",
+    o:["A) Atacar con fuerza las creencias de los incrédulos.","B) Presentar una respuesta razonada con mansedumbre y reverencia.","C) Disculparse por ser cristiano ante la sociedad."],
+    c:1, ref:"1 Pedro 3:15",
+    v:"1 Pedro 3:15 — «Sino santificad a Dios el Señor en vuestros corazones, y estad siempre preparados para presentar defensa con mansedumbre y reverencia ante todo el que os demande razón de la esperanza que hay en vosotros.»" },
+
+  { id:8, q:"¿Está escrito así? 'No devolviendo mal por mal, ni AGRAVIO por AGRAVIO...'",
+    o:["Sí","No"], c:1, ref:"1 Pedro 3:9",
+    v:"1 Pedro 3:9 — «No devolviendo mal por mal, ni maldición por maldición, sino por el contrario, bendiciendo, sabiendo que fuisteis llamados a que heredaseis bendición.»" },
+
+  { id:9, q:"¿Está escrito así? 'Porque los ojos del Señor están sobre los justos, y sus oídos atentos a sus oraciones...'",
+    o:["Sí","No"], c:0, ref:"1 Pedro 3:12",
+    v:"1 Pedro 3:12 — «Porque los ojos del Señor están sobre los justos, y sus oídos atentos a sus oraciones; pero el rostro del Señor está contra aquellos que hacen el mal.»" },
+
+  { id:10, q:"¿Está escrito así? 'Apártese del mal, y haga el bien; Busque la paz, y HÁGALA.'",
+    o:["Sí","No"], c:1, ref:"1 Pedro 3:11",
+    v:"1 Pedro 3:11 — «Apártese del mal, y haga el bien; busque la paz, y sígala.»" },
+
+  { id:11, q:"¿Está escrito así? '¿Y quién es aquel que os podrá PERJUDICAR, si vosotros seguís el bien?'",
+    o:["Sí","No"], c:1, ref:"1 Pedro 3:13",
+    v:"1 Pedro 3:13 — «¿Y quién es aquel que os podrá hacer daño, si vosotros seguís el bien?»" },
+
+  { id:12, q:"¿Está escrito así? '...para que en lo que murmuran de vosotros como de PERSONAS IMPÍAS, sean avergonzados...'",
+    o:["Sí","No"], c:1, ref:"1 Pedro 3:16",
+    v:"1 Pedro 3:16 — «Teniendo buena conciencia, para que en lo que murmuran de vosotros como de malhechores, sean avergonzados los que calumnian vuestra buena conducta en Cristo.»" },
+
+  { id:13, q:"¿Está escrito así? '...y a él están sujetos ángeles, autoridades y potestades.'",
+    o:["Sí","No"], c:0, ref:"1 Pedro 3:22",
+    v:"1 Pedro 3:22 — «Quien habiendo subido al cielo está a la diestra de Dios; y a él están sujetos ángeles, autoridades y potestades.»" },
+
+  { id:14, q:"¿Está escrito así? 'Porque mejor es que padezcáis haciendo el bien, si la voluntad de Dios así lo quiere, que haciendo el mal.'",
+    o:["Sí","No"], c:0, ref:"1 Pedro 3:17",
+    v:"1 Pedro 3:17 — «Porque mejor es que padezcáis haciendo el bien, si la voluntad de Dios así lo quiere, que haciendo el mal.»" },
+
+  { id:15, q:"En un grupo de WhatsApp, se genera una discusión fuerte. ¿Qué virtud del v. 8 falta?",
+    o:["A) Misericordia y amabilidad (cortesía).","B) Disciplina eclesiástica inmediata.","C) Valentía para defender la opinión propia."],
+    c:0, ref:"1 Pedro 3:8",
+    v:"1 Pedro 3:8 — «Finalmente, sed todos de un mismo sentir, compasivos, amándoos fraternalmente, misericordiosos, amigables.»" },
+
+  { id:16, q:"Un hermano te cuenta un chisme sobre otro miembro. ¿Cuál es tu reacción bíblica?",
+    o:["A) Escuchar y solo contarle a tu mejor amigo para orar.","B) Refrenar tu lengua, frenar el chisme y corregir al hermano que te lo contó.","C) Ir a reclamarle inmediatamente al hermano mencionado."],
+    c:1, ref:"1 Pedro 3:10",
+    v:"1 Pedro 3:10 — «Porque: El que quiere amar la vida y ver días buenos, refrene su lengua de mal, y sus labios no hablen engaño.»" },
+
+  { id:17, q:"Sufres discriminación en el trabajo por no participar en fiestas mundanas. ¿Cómo debes sentirte (v. 14)?",
+    o:["A) Triste porque Dios no evitó esa situación.","B) Bienaventurado, sabiendo que no debes temer ni conturbarte.","C) Preocupado por tu estabilidad financiera."],
+    c:1, ref:"1 Pedro 3:14",
+    v:"1 Pedro 3:14 — «Mas también si alguna cosa padecéis por causa de la justicia, bienaventurados sois. Por tanto, no os amedrentéis por temor de ellos, ni os conturbéis.»" },
+
+  { id:18, q:"Han levantado un falso testimonio contra un líder joven. ¿Cuál es su mejor defensa?",
+    o:["A) Hacer una transmisión en vivo atacando a los críticos.","B) Guardar silencio y resignarse.","C) Mantener una buena conciencia y conducta que avergüence a los calumniadores."],
+    c:2, ref:"1 Pedro 3:16",
+    v:"1 Pedro 3:16 — «Teniendo buena conciencia, para que en lo que murmuran de vosotros como de malhechores, sean avergonzados los que calumnian vuestra buena conducta en Cristo.»" },
+
+  { id:19, q:"Alguien de la iglesia te ofende directamente. Según el v. 9, ¿qué debes hacer?",
+    o:["A) Devolver una bendición, pues a eso fuiste llamado.","B) Devolver el agravio para que aprenda a respetar.","C) Ignorar a la persona, pero quejarse con el pastor."],
+    c:0, ref:"1 Pedro 3:9",
+    v:"1 Pedro 3:9 — «No devolviendo mal por mal, ni maldición por maldición, sino por el contrario, bendiciendo, sabiendo que fuisteis llamados a que heredaseis bendición.»" },
+
+  { id:20, q:"Un amigo ateo te pregunta con respeto por qué crees. ¿Cómo respondes (v. 15)?",
+    o:["A) Con una respuesta razonada, amable y con respeto.","B) Con un versículo de condenación para que sienta miedo.","C) Diciendo que es algo que no se puede explicar."],
+    c:0, ref:"1 Pedro 3:15",
+    v:"1 Pedro 3:15 — «Estad siempre preparados para presentar defensa con mansedumbre y reverencia ante todo el que os demande razón de la esperanza que hay en vosotros.»" },
+
+  { id:21, q:"Un hermano tiene pavor a que le echen un 'mal de ojo'. ¿Qué verdad del v. 22 lo libera?",
+    o:["A) Que debe ungir su puerta con aceite.","B) Que Cristo venció y a Él están sujetos ángeles y potestades espirituales.","C) Que necesita un amuleto cristiano."],
+    c:1, ref:"1 Pedro 3:22",
+    v:"1 Pedro 3:22 — «Quien habiendo subido al cielo está a la diestra de Dios; y a él están sujetos ángeles, autoridades y potestades.»" },
+
+  { id:22, q:"Un hermano es arrestado por estafa y dice que es 'padecimiento por Cristo'. ¿Es correcto?",
+    o:["A) Sí, porque el mundo odia a los cristianos.","B) No, Pedro dice que es mejor padecer haciendo el bien que haciendo el mal.","C) Depende de si usó el dinero para la iglesia."],
+    c:1, ref:"1 Pedro 3:17",
+    v:"1 Pedro 3:17 — «Porque mejor es que padezcáis haciendo el bien, si la voluntad de Dios así lo quiere, que haciendo el mal.»" },
+];
+
+// ═══════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════
+const CIRC = 251;   // 2π × 40
+const PTS  = 100;
+
+const state = {
+  scores:   { a: 0, b: 0 },
+  answered: new Set(),
+  shuffled: [],     // shuffled question order
+  posMap:   {},     // tile position (1-22) → question object
+  activeQ:  null,
+  timerID:  null,
+  secs:     20,
+};
+
+// ═══════════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════════
+const $ = id => document.getElementById(id);
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function showScreen(id) {
+  ['screen-board', 'screen-question', 'screen-welcome'].forEach(s => {
+    const el = $(s);
+    if(el) el.classList.add('hidden');
+  });
+  $(id).classList.remove('hidden');
+}
+
+function showPhase(n) {
+  [1, 2, 3].forEach(i => $(`phase-${i}`).classList.toggle('hidden', i !== n));
+}
+
+// ═══════════════════════════════════════════════════
+//  SCORES
+// ═══════════════════════════════════════════════════
+function renderScores() {
+  ['a', 'b'].forEach(t => {
+    [`${t}1-score`, `${t}2-score`].forEach(id => {
+      const el = $(id);
+      if (el) el.textContent = state.scores[t];
+    });
+  });
+}
+
+function addScore(team, delta) {
+  state.scores[team] = Math.max(0, state.scores[team] + delta);
+  renderScores();
+  // pop animation on both panels
+  [`${team}1-score`, `${team}2-score`].forEach(id => {
+    const el = $(id);
+    if (!el) return;
+    el.classList.remove('pop');
+    void el.offsetWidth;
+    el.classList.add('pop');
+  });
+}
+
+// ═══════════════════════════════════════════════════
+//  BOARD
+// ═══════════════════════════════════════════════════
+function buildBoard() {
+  // Shuffle DB and map positions 1-22
+  state.shuffled = shuffle(DB);
+  state.posMap   = {};
+  state.shuffled.forEach((q, i) => { state.posMap[i + 1] = q; });
+
+  const board = $('question-board');
+  board.innerHTML = '';
+
+  for (let pos = 1; pos <= 22; pos++) {
+    const btn = document.createElement('button');
+    btn.className = `tile${state.answered.has(state.posMap[pos].id) ? ' done' : ''}`;
+    btn.textContent = pos;
+    btn.setAttribute('aria-label', `Pregunta ${pos}`);
+    btn.dataset.pos = pos;
+    btn.onclick = () => openQuestion(state.posMap[pos], pos);
+    board.appendChild(btn);
+  }
+
+  $('progress-chip').textContent = `${state.answered.size} / 22 respondidas`;
+}
+
+// ═══════════════════════════════════════════════════
+//  QUESTION FLOW
+// ═══════════════════════════════════════════════════
+function openQuestion(q, pos) {
+  state.activeQ = q;
+  resetTimer();
+
+  $('q-num-badge').textContent  = pos || q.id;
+  $('question-text').textContent = q.q;
+
+  showPhase(1);
+  showScreen('screen-question');
+}
+
+// Phase 1 → 2: Mostrar opciones + start timer
+function revealOptions() {
+  const q = state.activeQ;
+  const list = $('options-list');
+  list.innerHTML = '';
+  const isBool = q.o.length === 2;
+  list.className = `options-list${isBool ? ' bool-mode' : ''}`;
+
+  q.o.forEach((text, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'btn-opt';
+    btn.textContent = text;
+    // re-trigger animation each time
+    btn.style.animationDelay = `${0.05 + i * 0.08}s`;
+    btn.onclick = () => handleAnswer(i);
+    list.appendChild(btn);
+  });
+
+  showPhase(2);
+  startTimer();
+}
+
+// ─── TIMER ───────────────────────────────────
+function startTimer() {
+  clearInterval(state.timerID);
+  state.secs = 20;
+  updateTimerUI(20);
+
+  state.timerID = setInterval(() => {
+    state.secs--;
+    updateTimerUI(state.secs);
+    if (state.secs <= 5) {
+      $('ring-prog').classList.add('danger');
+      $('timer-text').classList.add('danger');
+    }
+    if (state.secs <= 0) {
+      clearInterval(state.timerID);
+      onTimeout();
+    }
+  }, 1000);
+}
+
+function stopTimer() { clearInterval(state.timerID); }
+
+function resetTimer() {
+  stopTimer();
+  $('ring-prog').classList.remove('danger');
+  $('timer-text').classList.remove('danger');
+  updateTimerUI(20);
+}
+
+function updateTimerUI(s) {
+  $('timer-text').textContent = s;
+  $('ring-prog').style.strokeDashoffset = CIRC - (s / 20) * CIRC;
+}
+
+function onTimeout() {
+  disableOpts();
+  showVersePanel('timeout');
+}
+
+// ─── OPTIONS ─────────────────────────────────
+function handleAnswer(idx) {
+  stopTimer();
+  const isCorrect = idx === state.activeQ.c;
+  disableOpts();
+
+  document.querySelectorAll('.btn-opt').forEach((b, i) => {
+    if (i === state.activeQ.c) b.classList.add('opt-correct');
+    else if (i === idx && !isCorrect) b.classList.add('opt-wrong');
+  });
+
+  setTimeout(() => showVersePanel(isCorrect ? 'correct' : 'wrong'), 800);
+}
+
+function disableOpts() {
+  document.querySelectorAll('.btn-opt').forEach(b => b.disabled = true);
+}
+
+// ─── VERSE REVEAL ────────────────────────────
+function showVersePanel(result) {
+  const q = state.activeQ;
+  state.answered.add(q.id);
+
+  const badge = $('verdict-badge');
+  const label = $('verdict-label');
+  badge.className = 'verdict-badge';
+  label.className = 'verdict-label';
+
+  if (result === 'correct') {
+    badge.textContent = '✓'; badge.classList.add('vb-correct');
+    label.textContent = '¡Correcto!'; label.classList.add('vl-correct');
+  } else if (result === 'wrong') {
+    badge.textContent = '✗'; badge.classList.add('vb-wrong');
+    label.textContent = 'Incorrecto'; label.classList.add('vl-wrong');
+  } else {
+    badge.textContent = '⏱'; badge.classList.add('vb-timeout');
+    label.textContent = '¡Tiempo!'; label.classList.add('vl-timeout');
+  }
+
+  $('verse-ref').textContent  = q.ref;
+  $('verse-body').textContent = q.v;
+
+  showPhase(3);
+}
+
+function backToBoard() {
+  stopTimer();
+  state.activeQ = null;
+  buildBoard();
+  renderScores();
+  showScreen('screen-board');
+}
+
+// ═══════════════════════════════════════════════════
+//  RESET
+// ═══════════════════════════════════════════════════
+function resetGame() {
+  if (!confirm('¿Reiniciar el juego? Se borrarán todos los puntajes.')) return;
+  stopTimer();
+  state.scores   = { a: 0, b: 0 };
+  state.answered.clear();
+  state.activeQ  = null;
+  buildBoard();
+  renderScores();
+  showScreen('screen-board');
+}
+
+// ═══════════════════════════════════════════════════
+//  WIRING
+// ═══════════════════════════════════════════════════
+$('btn-mostrar').addEventListener('click', revealOptions);
+$('btn-volver').addEventListener('click', backToBoard);
+$('btn-back-top').addEventListener('click', () => { stopTimer(); backToBoard(); });
+$('btn-reset').addEventListener('click', resetGame);
+
+[
+  ['a1-plus',  'a',  PTS], ['a1-minus', 'a', -PTS],
+  ['b1-plus',  'b',  PTS], ['b1-minus', 'b', -PTS],
+  ['a2-plus',  'a',  PTS], ['a2-minus', 'a', -PTS],
+  ['b2-plus',  'b',  PTS], ['b2-minus', 'b', -PTS],
+].forEach(([id, t, d]) => {
+  const el = $(id);
+  if (el) el.addEventListener('click', () => addScore(t, d));
+});
+
+// ═══════════════════════════════════════════════════
+//  TEAM NAMES
+// ═══════════════════════════════════════════════════
+const teamNames = { a: 'Equipo A', b: 'Equipo B' };
+
+function applyTeamNames() {
+  ['a1-name','a2-name'].forEach(id => {
+    const el = $(id); if (el) el.textContent = teamNames.a;
+  });
+  ['b1-name','b2-name'].forEach(id => {
+    const el = $(id); if (el) el.textContent = teamNames.b;
+  });
+}
+
+// Start button
+$('btn-start').addEventListener('click', () => {
+  const na = $('input-team-a').value.trim();
+  const nb = $('input-team-b').value.trim();
+  teamNames.a = na || 'Equipo A';
+  teamNames.b = nb || 'Equipo B';
+  applyTeamNames();
+  buildBoard();
+  renderScores();
+  showScreen('screen-board');
+});
+
+// Allow Enter key to start
+['input-team-a','input-team-b'].forEach(id => {
+  $(id).addEventListener('keydown', e => {
+    if (e.key === 'Enter') $('btn-start').click();
+  });
+});
+
+// Reset now goes back to welcome screen
+function resetGame() {
+  if (!confirm('¿Reiniciar el juego? Se borrarán todos los puntajes.')) return;
+  stopTimer();
+  state.scores   = { a: 0, b: 0 };
+  state.answered.clear();
+  state.activeQ  = null;
+  $('input-team-a').value = '';
+  $('input-team-b').value = '';
+  showScreen('screen-welcome');
+}
+
+// ═══════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════
+showScreen('screen-welcome');
+// Focus first input after brief delay for animation
+setTimeout(() => $('input-team-a').focus(), 400);
+</script>
 </body>
 </html>

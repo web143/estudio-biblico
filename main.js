@@ -1,213 +1,295 @@
-import { gameNodes } from './database.js';
+import { questions } from './database.js';
 
-class SovereignDomainEngine {
-    constructor() {
-        this.nodes = [...gameNodes];
-        this.scores = { a: 0, b: 0 };
-        this.activeNodeIdx = null;
-        this.currentMode = 'idle'; // idle, claiming, consolidating, hacking
-        
-        // UI Cache
-        this.mapNodesGroup = document.getElementById('map-nodes');
-        this.mapLinesGroup = document.getElementById('map-lines');
-        this.scoreA = document.getElementById('score-a');
-        this.scoreB = document.getElementById('score-b');
-        this.powerA = document.getElementById('power-a');
-        this.powerB = document.getElementById('power-b');
-        this.overlay = document.getElementById('overlay');
-        this.actionModal = document.getElementById('action-modal');
-        this.readingMode = document.getElementById('reading-mode');
-        this.modalQuestion = document.getElementById('modal-question');
-        this.modalControls = document.getElementById('modal-controls');
-        this.modalType = document.getElementById('modal-type-indicator');
-        this.modalVerse = document.getElementById('modal-verse');
-        this.actionLabel = document.getElementById('current-action-label');
-        
-        this.init();
-    }
+// ─── CONSTANTS ───────────────────────────────────────────────
+const TIMER_DURATION = 20;        // seconds
+const CIRCUMFERENCE  = 327;       // 2π × 52 (SVG ring r=52)
+const PTS_PER_CLICK  = 100;       // points per manual +/- press
 
-    init() {
-        this.renderMap();
-        document.getElementById('close-reading').onclick = () => this.closeOverlays();
-        document.getElementById('btn-reset').onclick = () => window.location.reload();
-        this.updateLeaderboard();
-    }
+// ─── STATE ───────────────────────────────────────────────────
+const state = {
+  scores: { a: 0, b: 0 },
+  answered: new Set(),
+  activeQ: null,
+  timerInterval: null,
+  timerRemaining: TIMER_DURATION,
+  phase: 'board',   // 'board' | 'question' | 'options' | 'verse'
+};
 
-    renderMap() {
-        this.mapNodesGroup.innerHTML = '';
-        this.mapLinesGroup.innerHTML = '';
+// ─── DOM REFS ────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
 
-        const nodePositions = [
-            { x: 150, y: 150 }, { x: 400, y: 100 }, { x: 650, y: 150 },
-            { x: 150, y: 350 }, { x: 400, y: 400 }, { x: 650, y: 350 }
-        ];
+const screens = {
+  board:    $('screen-board'),
+  question: $('screen-question'),
+};
 
-        // Render Lines
-        for(let i = 0; i < nodePositions.length - 1; i++) {
-            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-            line.setAttribute("x1", nodePositions[i].x);
-            line.setAttribute("y1", nodePositions[i].y);
-            line.setAttribute("x2", nodePositions[i+1].x);
-            line.setAttribute("y2", nodePositions[i+1].y);
-            line.setAttribute("class", "map-connection");
-            this.mapLinesGroup.appendChild(line);
-        }
+const ui = {
+  board:        $('question-board'),
+  progressLabel: $('progress-label'),
 
-        // Render Nodes
-        this.nodes.forEach((node, i) => {
-            const pos = nodePositions[i];
-            const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
-            group.setAttribute("class", `map-node ${this.getNodeClasses(node)}`);
-            group.setAttribute("data-idx", i);
-            group.onclick = () => this.handleNodeClick(i);
+  // score panels (board screen)
+  scoreA:  $('score-a'),  fillA:  $('fill-a'),
+  scoreB:  $('score-b'),  fillB:  $('fill-b'),
+  // score panels (question screen)
+  scoreA2: $('score-a2'), fillA2: $('fill-a2'),
+  scoreB2: $('score-b2'), fillB2: $('fill-b2'),
 
-            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-            circle.setAttribute("cx", pos.x);
-            circle.setAttribute("cy", pos.y);
-            circle.setAttribute("r", 20);
-            
-            const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            label.setAttribute("x", pos.x);
-            label.setAttribute("y", pos.y);
-            label.setAttribute("class", "node-label");
-            label.textContent = i + 1;
+  // question card
+  qNumber:   $('q-number'),
+  qCategory: $('q-category'),
+  questionText: $('question-text'),
 
-            group.appendChild(circle);
-            group.appendChild(label);
-            this.mapNodesGroup.appendChild(group);
-        });
-    }
+  phaseReveal:  $('phase-reveal'),
+  phaseOptions: $('phase-options'),
+  phaseVerse:   $('phase-verse'),
 
-    getNodeClasses(node) {
-        let classes = node.status;
-        if (node.status.includes('TeamA')) classes += ' team-a';
-        if (node.status.includes('TeamB')) classes += ' team-b';
-        if (node.status.includes('unstable')) classes += ' unstable';
-        if (node.status.includes('locked')) classes += ' locked';
-        if (node.status.includes('vulnerable')) classes += ' vulnerable';
-        return classes;
-    }
+  timerCount:   $('timer-count'),
+  ringProgress: $('ring-progress'),
+  optionsList:  $('options-list'),
 
-    handleNodeClick(idx) {
-        const node = this.nodes[idx];
-        if (node.status === 'neutral') {
-            this.startAssault(idx);
-        } else if (node.status.includes('unstable')) {
-            this.startConsolidation(idx);
-        } else if (node.status.includes('vulnerable')) {
-            this.startHack(idx);
-        }
-    }
+  verdictIcon:     $('verdict-icon'),
+  verseRefDisplay: $('verse-ref-display'),
+  verseBodyDisplay: $('verse-body-display'),
+};
 
-    // --- GAME STATES ---
+// ─── SCORE HELPERS ───────────────────────────────────────────
+function updateScores() {
+  const maxPossible = questions.length * PTS_PER_CLICK;
+  const total = state.scores.a + state.scores.b || 1;
 
-    startAssault(idx) {
-        this.activeNodeIdx = idx;
-        const node = this.nodes[idx];
-        this.currentMode = 'claiming';
-        this.showModal("THE ASSAULT", node.verse, node.clue, [
-            { text: "ALPHA CLAIM", class: "btn-tech", callback: () => this.claimNode(idx, 'TeamA') },
-            { text: "BRAVO CLAIM", class: "btn-tech", callback: () => this.claimNode(idx, 'TeamB') }
-        ]);
-        this.actionLabel.textContent = `Assaulting Node ${idx + 1}...`;
-    }
+  const formatScore = v => String(v).padStart(3, '0');
+  const pctA = Math.min((state.scores.a / maxPossible) * 100, 100);
+  const pctB = Math.min((state.scores.b / maxPossible) * 100, 100);
 
-    claimNode(idx, team) {
-        const node = this.nodes[idx];
-        node.status = `${team}_unstable`;
-        this.renderMap();
-        this.startConsolidation(idx);
-    }
-
-    startConsolidation(idx) {
-        this.activeNodeIdx = idx;
-        const node = this.nodes[idx];
-        const team = node.status.split('_')[0];
-        this.currentMode = 'consolidating';
-        this.showModal("CONSOLIDATION", node.verse, node.lock_question, [
-            { text: "LOCKED ACCESS", class: "btn-tech", callback: () => this.lockNode(idx, team, false) },
-            { text: "GREEK MASTERY (SHIELD)", class: "btn-tech", callback: () => this.lockNode(idx, team, true) },
-            { text: "FAIL / VULNERABLE", class: "btn-tech", callback: () => this.makeVulnerable(idx, team) }
-        ]);
-    }
-
-    lockNode(idx, team, withShield) {
-        const node = this.nodes[idx];
-        node.status = `${team}_locked`;
-        node.shield = withShield;
-        this.scores[team === 'TeamA' ? 'a' : 'b'] += node.points + (withShield ? 50 : 0);
-        this.showReadingMode(node.explanation + (withShield ? "<br><br><b>🛡️ ESCUDO DE CONCIENCIA ACTIVADO:</b> El término griego ha sido masterizado." : ""));
-        this.renderMap();
-        this.updateLeaderboard();
-        this.actionLabel.textContent = `Node ${idx + 1} Secured by ${team}`;
-    }
-
-    makeVulnerable(idx, team) {
-        const node = this.nodes[idx];
-        node.status = `${team}_vulnerable`;
-        this.renderMap();
-        this.showReadingMode("Node integrity compromised. Opposite team can now attempt to HACK.");
-        this.actionLabel.textContent = `Node ${idx + 1} Vulnerable!`;
-    }
-
-    startHack(idx) {
-        this.activeNodeIdx = idx;
-        const node = this.nodes[idx];
-        const victimTeam = node.status.split('_')[0];
-        const hackerTeam = victimTeam === 'TeamA' ? 'TeamB' : 'TeamA';
-        
-        this.currentMode = 'hacking';
-        this.showModal("HACKING ATTEMPT", node.verse, `Hacker Team (${hackerTeam}): ${node.lock_question}`, [
-            { text: "HACK SUCCESSFUL", class: "btn-tech", callback: () => this.lockNode(idx, hackerTeam) },
-            { text: "HACK FAILED", class: "btn-tech", callback: () => this.closeOverlays() }
-        ]);
-    }
-
-    // --- UI HELPERS ---
-
-    showModal(type, verse, question, controls) {
-        this.modalType.textContent = type;
-        this.modalVerse.textContent = `NODE // ${verse}`;
-        this.modalQuestion.textContent = question;
-        this.modalControls.innerHTML = '';
-        
-        controls.forEach(ctrl => {
-            const btn = document.createElement('button');
-            btn.textContent = ctrl.text;
-            btn.className = ctrl.class;
-            btn.onclick = ctrl.callback;
-            this.modalControls.appendChild(btn);
-        });
-
-        this.overlay.classList.remove('hidden');
-        this.actionModal.classList.remove('hidden');
-        this.readingMode.classList.add('hidden');
-    }
-
-    showReadingMode(content) {
-        const node = this.nodes[this.activeNodeIdx];
-        document.getElementById('reading-content').innerHTML = node ? node.explanation : content;
-        this.overlay.classList.remove('hidden');
-        this.actionModal.classList.add('hidden');
-        this.readingMode.classList.remove('hidden');
-    }
-
-    closeOverlays() {
-        this.overlay.classList.add('hidden');
-        this.currentMode = 'idle';
-    }
-
-    updateLeaderboard() {
-        this.scoreA.textContent = this.scores.a.toString().padStart(4, '0');
-        this.scoreB.textContent = this.scores.b.toString().padStart(4, '0');
-        
-        const totalPoints = this.nodes.reduce((acc, n) => acc + n.points, 0);
-        this.powerA.style.width = `${(this.scores.a / totalPoints) * 100}%`;
-        this.powerB.style.width = `${(this.scores.b / totalPoints) * 100}%`;
-        
-        const captured = this.nodes.filter(n => n.status.includes('locked')).length;
-        document.getElementById('node-stats').textContent = `${captured} / ${this.nodes.length}`;
-    }
+  // Both panels
+  [ui.scoreA, ui.scoreA2].forEach(el => el && (el.textContent = formatScore(state.scores.a)));
+  [ui.scoreB, ui.scoreB2].forEach(el => el && (el.textContent = formatScore(state.scores.b)));
+  [ui.fillA,  ui.fillA2].forEach(el => el && (el.style.width = `${pctA}%`));
+  [ui.fillB,  ui.fillB2].forEach(el => el && (el.style.width = `${pctB}%`));
 }
 
-new SovereignDomainEngine();
+function bumpScore(el) {
+  el.classList.remove('bump');
+  // force reflow
+  void el.offsetWidth;
+  el.classList.add('bump');
+  setTimeout(() => el.classList.remove('bump'), 300);
+}
+
+function adjustScore(team, delta) {
+  state.scores[team] = Math.max(0, state.scores[team] + delta);
+  updateScores();
+  const scoreEl = team === 'a'
+    ? (state.phase === 'board' ? ui.scoreA : ui.scoreA2)
+    : (state.phase === 'board' ? ui.scoreB : ui.scoreB2);
+  bumpScore(scoreEl);
+}
+
+// ─── TIMER ───────────────────────────────────────────────────
+function startTimer() {
+  clearInterval(state.timerInterval);
+  state.timerRemaining = TIMER_DURATION;
+  updateTimerUI(TIMER_DURATION);
+
+  state.timerInterval = setInterval(() => {
+    state.timerRemaining--;
+    updateTimerUI(state.timerRemaining);
+
+    if (state.timerRemaining <= 5) {
+      ui.timerCount.classList.add('urgent');
+      ui.ringProgress.classList.add('urgent');
+    }
+
+    if (state.timerRemaining <= 0) {
+      clearInterval(state.timerInterval);
+      handleTimeout();
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(state.timerInterval);
+}
+
+function updateTimerUI(seconds) {
+  ui.timerCount.textContent = seconds;
+  const offset = CIRCUMFERENCE - (seconds / TIMER_DURATION) * CIRCUMFERENCE;
+  ui.ringProgress.style.strokeDashoffset = offset;
+}
+
+function handleTimeout() {
+  disableOptions();
+  showVerse('timeout');
+}
+
+// ─── BOARD RENDERING ─────────────────────────────────────────
+function renderBoard() {
+  ui.board.innerHTML = '';
+  questions.forEach(q => {
+    const tile = document.createElement('button');
+    tile.className = `tile cat-${q.category.toLowerCase()}`;
+    tile.setAttribute('aria-label', `Pregunta ${q.id}: categoría ${q.category}`);
+    if (state.answered.has(q.id)) tile.classList.add('answered');
+
+    tile.innerHTML = `${q.id}<span class="tile-dot"></span>`;
+    tile.onclick = () => openQuestion(q);
+    ui.board.appendChild(tile);
+  });
+
+  ui.progressLabel.textContent = `${state.answered.size} / ${questions.length} respondidas`;
+}
+
+// ─── SCREEN SWITCHING ────────────────────────────────────────
+function showScreen(name) {
+  Object.values(screens).forEach(s => s.classList.add('hidden'));
+  screens[name].classList.remove('hidden');
+  state.phase = name;
+}
+
+// ─── QUESTION FLOW ───────────────────────────────────────────
+function openQuestion(q) {
+  state.activeQ = q;
+  stopTimer();
+
+  // reset phases
+  ui.phaseReveal.classList.remove('hidden');
+  ui.phaseOptions.classList.add('hidden');
+  ui.phaseVerse.classList.add('hidden');
+
+  // reset timer visuals
+  ui.timerCount.classList.remove('urgent');
+  ui.ringProgress.classList.remove('urgent');
+  updateTimerUI(TIMER_DURATION);
+
+  // Question meta
+  ui.qNumber.textContent = `#${q.id}`;
+
+  // Category label style
+  const catKey = q.category.toLowerCase();
+  ui.qCategory.textContent = q.category;
+  ui.qCategory.className = `q-category cat-label-${catKey}`;
+
+  ui.questionText.textContent = q.question;
+
+  showScreen('question');
+}
+
+function revealOptions() {
+  const q = state.activeQ;
+  ui.phaseReveal.classList.add('hidden');
+  ui.phaseOptions.classList.remove('hidden');
+
+  // Build option buttons
+  ui.optionsList.innerHTML = '';
+  const isBoolean = q.type === 'boolean';
+  if (isBoolean) ui.optionsList.classList.add('boolean-layout');
+  else           ui.optionsList.classList.remove('boolean-layout');
+
+  q.options.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'btn-option';
+    btn.textContent = opt;
+    btn.setAttribute('id', `opt-${idx}`);
+    btn.onclick = () => handleAnswer(idx);
+    ui.optionsList.appendChild(btn);
+  });
+
+  startTimer();
+}
+
+function handleAnswer(selectedIdx) {
+  stopTimer();
+  const q = state.activeQ;
+  const isCorrect = selectedIdx === q.correct;
+
+  disableOptions();
+
+  // Highlight correct / wrong
+  document.querySelectorAll('.btn-option').forEach((btn, i) => {
+    if (i === q.correct) btn.classList.add('correct-ans');
+    else if (i === selectedIdx && !isCorrect) btn.classList.add('wrong-ans');
+  });
+
+  setTimeout(() => showVerse(isCorrect ? 'correct' : 'wrong'), 700);
+}
+
+function disableOptions() {
+  document.querySelectorAll('.btn-option').forEach(btn => {
+    btn.disabled = true;
+  });
+}
+
+function showVerse(result) {
+  const q = state.activeQ;
+  state.answered.add(q.id);
+
+  // Verdict icon
+  ui.verdictIcon.className = 'verdict-icon';
+  if (result === 'correct') {
+    ui.verdictIcon.textContent = '✓';
+    ui.verdictIcon.classList.add('correct-icon');
+  } else if (result === 'wrong') {
+    ui.verdictIcon.textContent = '✗';
+    ui.verdictIcon.classList.add('wrong-icon');
+  } else {
+    ui.verdictIcon.textContent = '⏱';
+    ui.verdictIcon.classList.add('timeout-icon');
+  }
+
+  // Verse
+  ui.verseRefDisplay.textContent = q.verse_ref;
+  ui.verseBodyDisplay.textContent = q.verse_text;
+
+  // Transition phases
+  ui.phaseOptions.classList.add('hidden');
+  ui.phaseReveal.classList.add('hidden');
+  ui.phaseVerse.classList.remove('hidden');
+}
+
+function backToBoard() {
+  stopTimer();
+  state.activeQ = null;
+  state.phase = 'board';
+  renderBoard();
+  showScreen('board');
+  updateScores();
+}
+
+// ─── EVENT LISTENERS ─────────────────────────────────────────
+$('btn-show-options').addEventListener('click', revealOptions);
+$('btn-back-board').addEventListener('click', backToBoard);
+$('btn-reset').addEventListener('click', () => {
+  if (confirm('¿Reiniciar el juego? Se perderán los puntajes.')) {
+    stopTimer();
+    state.scores = { a: 0, b: 0 };
+    state.answered.clear();
+    state.activeQ = null;
+    renderBoard();
+    showScreen('board');
+    updateScores();
+  }
+});
+
+// +/- buttons — both screens
+[
+  ['btn-plus-a',  'a',  PTS_PER_CLICK],
+  ['btn-minus-a', 'a', -PTS_PER_CLICK],
+  ['btn-plus-b',  'b',  PTS_PER_CLICK],
+  ['btn-minus-b', 'b', -PTS_PER_CLICK],
+  ['btn-plus-a2',  'a',  PTS_PER_CLICK],
+  ['btn-minus-a2', 'a', -PTS_PER_CLICK],
+  ['btn-plus-b2',  'b',  PTS_PER_CLICK],
+  ['btn-minus-b2', 'b', -PTS_PER_CLICK],
+].forEach(([id, team, delta]) => {
+  const el = $(id);
+  if (el) el.addEventListener('click', () => adjustScore(team, delta));
+});
+
+// ─── INIT ────────────────────────────────────────────────────
+function init() {
+  renderBoard();
+  showScreen('board');
+  updateScores();
+}
+
+init();
