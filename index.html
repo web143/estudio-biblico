@@ -440,6 +440,12 @@ body {
 
 .bool-mode .btn-opt { text-align: center; font-size: 1.1rem; font-weight: 900; }
 
+.opt-letter {
+  font-weight: 900;
+  color: var(--purple);
+  margin-right: 4px;
+}
+
 /* Result states */
 .opt-correct {
   border-color: var(--green) !important;
@@ -1141,7 +1147,8 @@ function revealOptions() {
   q.o.forEach((text, i) => {
     const btn = document.createElement('button');
     btn.className = 'btn-opt';
-    btn.textContent = text;
+    const letter = String.fromCharCode(65 + i); // A, B, C
+    btn.innerHTML = `<span class="opt-letter">${letter})</span> ${text}`;
     // re-trigger animation each time
     btn.style.animationDelay = `${0.05 + i * 0.08}s`;
     btn.onclick = () => handleAnswer(i);
