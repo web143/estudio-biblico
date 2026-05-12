@@ -1127,8 +1127,6 @@ function handleDesempate() {
   alert('🏆 ¡MUERTE SÚBITA! Los equipos están empatados. Responde la siguiente pregunta correctamente para ganar. ¡Suerte!');
 }
 
-let isReanswering = false;
-
 function handleSlotClick(index) {
   const slot = state.gameSlots[index];
   if (!slot) return;
@@ -1136,7 +1134,6 @@ function handleSlotClick(index) {
   state.currentSlotActive = index;
   const q = slot.questionData;
   resetTimer();
-  isReanswering = slot.isSolved;
 
   $('q-num-badge').textContent  = slot.slotId;
   $('question-text').textContent = q.q;
@@ -1212,35 +1209,15 @@ function handleAnswer(idx) {
   stopTimer();
   const q = state.gameSlots[state.currentSlotActive].questionData;
   const isCorrect = idx === q.c;
-  disableOpts();
 
+  // Resaltar la opción seleccionada
   document.querySelectorAll('.btn-opt').forEach((b, i) => {
+    b.classList.remove('opt-correct', 'opt-wrong');
     if (i === q.c) b.classList.add('opt-correct');
-    else if (i === idx && !isCorrect) b.classList.add('opt-wrong');
+    else if (i === idx) b.classList.add('opt-wrong');
   });
 
-  // Si es re-answer, ajustar puntuación
-  if (isReanswering) {
-    const oldCorrect = state.gameSlots[state.currentSlotActive].wasCorrect;
-    if (oldCorrect) {
-      // Quitar puntos de la respuesta anterior
-      state.scores.a = Math.max(0, state.scores.a - PTS);
-      state.scores.b = Math.max(0, state.scores.b - PTS);
-    }
-    if (isCorrect) {
-      // Añadir puntos por la nueva respuesta correcta
-      state.scores.a += PTS;
-      state.scores.b += PTS;
-    }
-    state.gameSlots[state.currentSlotActive].wasCorrect = isCorrect;
-    renderScores();
-  }
-
   setTimeout(() => showVersePanel(isCorrect ? 'correct' : 'wrong'), 800);
-}
-
-function disableOpts() {
-  document.querySelectorAll('.btn-opt').forEach(b => b.disabled = true);
 }
 
 // ─── VERSE REVEAL ────────────────────────────
