@@ -1048,6 +1048,13 @@ function showScreen(id) {
 
 function showPhase(n) {
   [1, 2, 3].forEach(i => $(`phase-${i}`).classList.toggle('hidden', i !== n));
+  // Resetear clases de opciones al cambiar de fase
+  if (n === 1) {
+    document.querySelectorAll('.btn-opt').forEach(b => {
+      b.classList.remove('opt-correct', 'opt-wrong');
+      b.disabled = false;
+    });
+  }
 }
 
 // ═══════════════════════════════════════════════════
@@ -1093,8 +1100,7 @@ function renderBoard() {
     <button 
       data-slot-index="${index}"
       onclick="handleSlotClick(${index})"
-      class="tile ${slot.isSolved ? 'completado' : ''}"
-      ${slot.isSolved ? 'disabled' : ''}>
+      class="tile ${slot.isSolved ? 'completado' : ''}">
       ${slot.slotId}
       ${slot.isSolved ? '<span class="check-icon">✓</span>' : ''}
     </button>
