@@ -1,22 +1,17 @@
-const CACHE_NAME = 'quiz-biblico-v11';
+const CACHE_NAME = 'quiz-biblico-v12';
 const ASSETS_TO_CACHE = [
-  './',
-  './index.html',
   './manifest.json',
   './icon.svg'
 ];
 
-// Instalar y guardar recursos
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      // Intentar forzar la descarga o usar la web actual
       return cache.addAll(ASSETS_TO_CACHE);
     }).then(() => self.skipWaiting())
   );
 });
 
-// Activar y borrar cachés antiguos
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
@@ -31,17 +26,16 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Interceptar peticiones para que funcionen 100% offline
 self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      // Devuelve del caché si está, o si no hace el fetch de internet
-      return cachedResponse || fetch(event.request).catch(() => {
-        // En caso extremo de no poder conectar, intentar resolver index html
-        if (event.request.mode === 'navigate') {
-          return caches.match('./index.html');
-        }
-      });
-    })
-  );
+  if (event.request.mode === 'navigate' || event.request.url.includes('index.html')) {
+    event.respondWith(
+      fetch(event.request)
+        .then(res => caches.open(CACHE_NAME).then(cache => { cache.put(event.request, res.clone()); return res; }))
+        .catch(() => caches.match(event.request).then(cached => cached || caches.match('./index.html')))
+    );
+  } else {
+    event.respondWith(
+      caches.match(event.request).then(cached => cached || fetch(event.request))
+    );
+  }
 });
