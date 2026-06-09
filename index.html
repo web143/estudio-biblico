@@ -3,183 +3,357 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quiz Bíblico — 1 Juan 2</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script>if('serviceWorker'in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js').catch(err=>console.log('SW fail:',err));});}</script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+<title>Estudio Bíblico — 1 Juan 2</title>
+<script>if('serviceWorker'in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js').catch(()=>{});});}</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{height:100%}
-body{font-family:'Inter',sans-serif;background:#FDFBF7;min-height:100vh;overflow-x:hidden}
-:root{--ease-bounce:cubic-bezier(0.175,0.885,0.32,1.275);--ease-out:cubic-bezier(0.22,1,0.36,1)}
-.bg-dots{background-image:radial-gradient(rgba(124,58,237,0.06) 1px,transparent 1px);background-size:24px 24px}
-.slot-card{position:relative;border-radius:1.5rem;background:#fff;border:2px solid rgba(0,0,0,0.04);cursor:pointer;user-select:none;transition:all 0.3s var(--ease-bounce);animation:float var(--float-dur,3s) ease-in-out infinite;animation-delay:var(--float-delay,0s);will-change:transform}
-.slot-card:hover{transform:scale(1.06) translateY(-6px);box-shadow:0 24px 48px -12px rgba(0,0,0,0.18)!important;border-color:var(--hover-color,#7C3AED)}
-.slot-card:active{transform:scale(0.96)}
-.slot-card.solved{opacity:0.5;cursor:default;animation:none;transform:none!important;border-color:rgba(0,0,0,0.06);box-shadow:0 2px 8px rgba(0,0,0,0.04)!important;pointer-events:none}
-.slot-card.solved:hover{transform:none!important}
-@keyframes float{0%,100%{transform:translateY(0px)}50%{transform:translateY(-7px)}}
-@keyframes popIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;background:#FDFBF7;min-height:100vh;overflow-x:hidden;color:#1f2937;line-height:1.5}
+:root{--ease-bounce:cubic-bezier(0.175,0.885,0.32,1.275);--ease-out:cubic-bezier(0.22,1,0.36,1);--violet:#7C3AED;--violet-bg:#f5f3ff;--violet-border:#c4b5fd;--emerald:#059669;--emerald-bg:#ecfdf5;--emerald-border:#6ee7b7;--amber:#F59E0B;--amber-bg:#fffbeb;--amber-border:#fcd34d;--rose:#ef4444;--rose-bg:#fef2f2;--success:#10b981;--success-bg:#ecfdf5;--gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-300:#d1d5db;--gray-400:#9ca3af;--gray-500:#6b7280;--gray-600:#4b5563;--gray-700:#374151;--gray-800:#1f2937;--gray-900:#111827}
+.hidden{display:none!important}
+.screen{min-height:100vh;display:flex;flex-direction:column}
 @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-@keyframes slideDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
-@keyframes pulseGold{0%,100%{box-shadow:0 0 20px rgba(245,158,11,0.3),0 0 60px rgba(245,158,11,0.15)}50%{box-shadow:0 0 40px rgba(245,158,11,0.5),0 0 80px rgba(245,158,11,0.25)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
 @keyframes scorePop{0%{transform:scale(1)}40%{transform:scale(1.35)}100%{transform:scale(1)}}
-@keyframes antiGravityBreak{0%{transform:translateY(0);opacity:1}50%{transform:translateY(-40px);opacity:0.7}100%{transform:translateY(-80px);opacity:0}}
-.score-pop{animation:scorePop 0.35s var(--ease-bounce)}
-.anti-break{animation:antiGravityBreak 0.8s var(--ease-out) forwards}
-.btn-opt{width:100%;padding:14px 20px;text-align:left;background:#fff;border:2.5px solid #e5e7eb;color:#1f2937;font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:700;border-radius:1.2rem;cursor:pointer;transition:all 0.2s var(--ease-bounce);opacity:0;transform:scale(0.7) translateY(10px);animation:optPop 0.4s var(--ease-bounce) forwards;line-height:1.4}
-.btn-opt:nth-child(1){animation-delay:0.05s}
-.btn-opt:nth-child(2){animation-delay:0.13s}
-.btn-opt:nth-child(3){animation-delay:0.21s}
-.btn-opt:nth-child(4){animation-delay:0.29s}
+@keyframes pulseGold{0%,100%{box-shadow:0 0 20px rgba(245,158,11,0.3),0 0 60px rgba(245,158,11,0.15)}50%{box-shadow:0 0 40px rgba(245,158,11,0.5),0 0 80px rgba(245,158,11,0.25)}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
 @keyframes optPop{to{opacity:1;transform:scale(1) translateY(0)}}
-.btn-opt:hover:not(:disabled){border-color:#7C3AED;background:#f5f3ff;transform:translateY(-2px) scale(1.02)}
-.btn-opt:active:not(:disabled){transform:scale(0.98)}
-.btn-opt:disabled{cursor:default;opacity:0.7}
-.btn-opt.opt-correct{border-color:#10b981!important;background:#ecfdf5!important;color:#065f46!important}
-.btn-opt.opt-wrong{border-color:#ef4444!important;background:#fef2f2!important;color:#991b1b!important;opacity:0.65}
-.btn-opt.opt-correct .opt-letter,.btn-opt.opt-wrong .opt-letter{color:inherit!important}
-.opt-letter{font-weight:900;color:#7C3AED;margin-right:4px}
-.btn-float{display:inline-flex;align-items:center;justify-content:center;gap:4px;padding:6px 12px;border-radius:9999px;font-weight:700;font-size:0.75rem;font-family:'Inter',sans-serif;border:2px solid transparent;cursor:pointer;transition:all 0.2s var(--ease-bounce);line-height:1}
-.btn-float:hover{transform:translateY(-2px) scale(1.05)}
-.btn-float:active{transform:scale(0.95)}
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(8px);z-index:40;animation:fadeIn 0.3s ease-out}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.score-pop{animation:scorePop .35s var(--ease-bounce)}
+
+/* ═══ WELCOME ═══ */
+.welcome-screen{align-items:center;justify-content:center;padding:32px 20px;position:relative;overflow:hidden;min-height:100vh;gap:0}
+.welcome-screen::before{content:'';position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,0.07),transparent 70%);top:-120px;left:-120px;pointer-events:none}
+.welcome-screen::after{content:'';position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(5,150,105,0.06),transparent 70%);bottom:-100px;right:-100px;pointer-events:none}
+.welcome-inner{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:28px;width:100%;max-width:460px}
+.welcome-logo{display:flex;flex-direction:column;align-items:center;gap:8px;animation:fadeDown .6s var(--ease-out) both}
+.welcome-emoji{font-size:3.5rem;filter:drop-shadow(0 8px 16px rgba(124,58,237,0.2));animation:float 3s ease-in-out infinite}
+.welcome-title{font-size:2rem;font-weight:900;color:var(--gray-900);letter-spacing:-.5px;text-align:center}
+.welcome-title span{color:var(--violet)}
+.welcome-sub{font-size:.8rem;font-weight:700;color:var(--gray-400);letter-spacing:1px;text-align:center}
+.teams-row{display:flex;gap:12px;width:100%;animation:fadeUp .6s .15s var(--ease-out) both}
+.team-card{flex:1;background:#fff;border-radius:1.5rem;padding:20px 16px;box-shadow:0 4px 20px rgba(0,0,0,0.06);border:2px solid var(--gray-100);display:flex;flex-direction:column;align-items:center;gap:10px;transition:border-color .2s,box-shadow .2s}
+.team-card:focus-within{border-color:var(--violet);box-shadow:0 4px 24px rgba(124,58,237,0.1)}
+.team-card.card-b:focus-within{border-color:var(--emerald);box-shadow:0 4px 24px rgba(5,150,105,0.1)}
+.card-avatar{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:1.3rem}
+.card-a .card-avatar{background:var(--violet-bg)}
+.card-b .card-avatar{background:var(--emerald-bg)}
+.card-label{font-size:.65rem;font-weight:800;letter-spacing:2px;text-transform:uppercase}
+.card-a .card-label{color:var(--violet)}
+.card-b .card-label{color:var(--emerald)}
+.team-input{width:100%;padding:10px 14px;border-radius:.9rem;border:2px solid var(--gray-200);background:var(--gray-50);font-family:inherit;font-size:.9rem;font-weight:700;color:var(--gray-800);text-align:center;outline:none;transition:border-color .2s}
+.team-input::placeholder{color:var(--gray-300);font-weight:600}
+.card-a .team-input:focus{border-color:var(--violet);box-shadow:0 0 0 3px rgba(124,58,237,0.1)}
+.card-b .team-input:focus{border-color:var(--emerald);box-shadow:0 0 0 3px rgba(5,150,105,0.1)}
+.btn-start{width:100%;padding:16px;border:none;border-radius:1.5rem;background:linear-gradient(135deg,var(--violet),#6D28D9);color:#fff;font-family:inherit;font-size:1rem;font-weight:900;letter-spacing:.3px;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,0.25);transition:all .25s var(--ease-bounce);display:flex;align-items:center;justify-content:center;gap:10px;animation:fadeUp .6s .3s var(--ease-out) both}
+.btn-start:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 14px 32px rgba(124,58,237,0.3)}
+.btn-start:active{transform:scale(.97)}
+.welcome-footnote{font-size:.7rem;font-weight:700;color:var(--gray-400);text-align:center;animation:fadeUp .6s .4s var(--ease-out) both}
+
+/* ═══ SCOREBOARD ═══ */
+.scoreboard{position:sticky;top:0;z-index:30;background:#FDFBF7/95;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid rgba(0,0,0,.05);padding:10px 16px}
+.scoreboard-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:8px}
+.team-panel{flex:1;display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:8px 12px;border-radius:1.2rem;transition:all .3s;border:2px solid transparent}
+.team-panel.active-a{border-color:var(--violet-border);background:var(--violet-bg)}
+.team-panel.active-b{border-color:var(--emerald-border);background:var(--emerald-bg)}
+.team-panel.inactive{background:rgba(255,255,255,.6);border-color:transparent}
+.team-label{font-size:.7rem;font-weight:800;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:1}
+.team-dot{width:8px;height:8px;border-radius:50%;display:none;flex-shrink:0}
+.team-dot.dot-a{background:var(--violet);box-shadow:0 0 8px rgba(124,58,237,.5)}
+.team-dot.dot-b{background:var(--emerald);box-shadow:0 0 8px rgba(5,150,105,.5)}
+.score-number{font-size:1.8rem;font-weight:900;color:var(--gray-900);margin-left:auto;font-variant-numeric:tabular-nums;min-width:2.5rem;text-align:right;line-height:1}
+.score-btns{display:flex;gap:3px;flex-shrink:0}
+.btn-score{display:inline-flex;align-items:center;justify-content:center;padding:4px 8px;border-radius:999px;font-weight:700;font-size:.65rem;font-family:inherit;border:2px solid transparent;cursor:pointer;transition:all .2s var(--ease-bounce);line-height:1;white-space:nowrap}
+.btn-score:hover{transform:translateY(-2px) scale(1.05)}
+.btn-score:active{transform:scale(.93)}
+.btn-score.plus-a{color:var(--violet);background:var(--violet-bg);border-color:var(--violet-border)}
+.btn-score.plus-a:hover{background:var(--violet);color:#fff}
+.btn-score.plus-b{color:var(--emerald);background:var(--emerald-bg);border-color:var(--emerald-border)}
+.btn-score.plus-b:hover{background:var(--emerald);color:#fff}
+.btn-score.minus{color:var(--rose);background:var(--rose-bg);border-color:#fecaca}
+.btn-score.minus:hover{background:var(--rose);color:#fff}
+.vs-badge{font-size:.55rem;font-weight:900;color:var(--gray-300);letter-spacing:2px;flex-shrink:0}
+.turn-badge{font-size:.5rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;padding:3px 10px;border-radius:999px;white-space:nowrap;flex-shrink:0}
+
+/* ═══ BOARD ═══ */
+.board-area{flex:1;display:flex;flex-direction:column;align-items:center;padding:24px 16px 32px;max-width:900px;margin:0 auto;width:100%}
+.board-title{text-align:center;margin-bottom:24px}
+.board-title h1{font-size:1.4rem;font-weight:900;color:var(--gray-900)}
+.board-title h1 span{color:var(--violet)}
+.board-title p{font-size:.75rem;font-weight:700;color:var(--gray-400);margin-top:4px;letter-spacing:1px;text-transform:uppercase}
+.slot-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;width:100%;max-width:520px;margin-bottom:20px}
+.slot-card{position:relative;border-radius:1.3rem;background:#fff;border:2px solid rgba(0,0,0,.04);cursor:pointer;user-select:none;display:flex;flex-direction:column;align-items:center;justify-content:center;aspect-ratio:1;padding:8px;transition:all .3s var(--ease-bounce);will-change:transform;animation:float var(--float-dur,3s) ease-in-out infinite;animation-delay:var(--float-delay,0s)}
+.slot-card:hover{transform:scale(1.06) translateY(-6px);box-shadow:0 20px 40px -12px rgba(0,0,0,.15)!important;border-color:var(--hover-color,#7C3AED)}
+.slot-card:active{transform:scale(.95)}
+.slot-card.solved{background:var(--gray-50);border-color:var(--gray-200);opacity:.85;cursor:pointer;animation:none;transform:none!important;box-shadow:0 2px 8px rgba(0,0,0,.04)!important}
+.slot-card.solved:hover{transform:scale(1.03) translateY(-2px)!important;opacity:1;border-color:var(--gray-300)}
+.slot-card.solved .slot-num{color:var(--gray-400)}
+.slot-num{font-size:1.3rem;font-weight:900;color:var(--gray-800);line-height:1;transition:color .3s}
+.slot-icon{font-size:.5rem;margin-top:2px;line-height:1}
+.board-footer{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.progress-chip{font-size:.7rem;font-weight:700;color:var(--gray-400);background:#fff;border-radius:999px;padding:6px 18px;border:1px solid var(--gray-100);box-shadow:0 2px 6px rgba(0,0,0,.03)}
+.btn-reset{font-size:.7rem;font-weight:700;color:var(--gray-400);background:#fff;border-radius:999px;padding:6px 18px;border:1px solid var(--gray-100);cursor:pointer;transition:all .2s;font-family:inherit;box-shadow:0 2px 6px rgba(0,0,0,.03)}
+.btn-reset:hover{background:var(--rose-bg);color:var(--rose);border-color:#fecaca}
+.btn-desempate{display:inline-flex;align-items:center;gap:12px;padding:18px 40px;border-radius:1.5rem;font-weight:900;font-size:1.5rem;color:#92400e;background:linear-gradient(135deg,#fcd34d,#f59e0b);border:2px solid #fbbf24;cursor:pointer;transition:transform .3s;font-family:inherit;box-shadow:0 0 40px rgba(245,158,11,.3);animation:pulseGold 2s ease-in-out infinite}
+.btn-desempate:hover{transform:scale(1.05)}
+
+/* ═══ MODAL ═══ */
+.modal-overlay{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:40;animation:fadeIn .3s ease-out}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.timer-ring{fill:none;stroke-width:7;stroke-linecap:round}
-.bet-card{flex:1;padding:28px 20px;border-radius:2rem;background:#fff;border:2.5px solid #e5e7eb;text-align:center;cursor:pointer;transition:all 0.3s var(--ease-bounce);animation:optPop 0.4s var(--ease-bounce) both}
-.bet-card:nth-child(1){animation-delay:0.05s}
-.bet-card:nth-child(2){animation-delay:0.15s}
+.modal-container{position:relative;z-index:50;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;background:#fff;border-radius:1.8rem;box-shadow:0 30px 60px rgba(0,0,0,.15);border:1px solid var(--gray-100);padding:28px 24px;animation:fadeUp .35s var(--ease-bounce)}
+.modal-container::-webkit-scrollbar{width:4px}
+.modal-container::-webkit-scrollbar-thumb{background:var(--gray-200);border-radius:99px}
+
+/* ═══ BETTING ═══ */
+.bet-header{text-align:center;margin-bottom:20px}
+.bet-turn-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:999px;font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.bet-turn-badge.a{background:var(--violet-bg);color:var(--violet)}
+.bet-turn-badge.b{background:var(--emerald-bg);color:var(--emerald)}
+.bet-title{font-size:1.5rem;font-weight:900;color:var(--gray-900)}
+.bet-subtitle{font-size:.85rem;font-weight:600;color:var(--gray-400);margin-top:4px}
+.bet-cards{display:flex;gap:12px}
+.bet-card{flex:1;padding:24px 12px;border-radius:1.5rem;background:#fff;border:2.5px solid var(--gray-200);text-align:center;cursor:pointer;transition:all .3s var(--ease-bounce);animation:fadeUp .4s var(--ease-bounce) both}
+.bet-card:nth-child(1){animation-delay:.05s}
+.bet-card:nth-child(2){animation-delay:.15s}
 .bet-card:hover{transform:translateY(-4px) scale(1.03)}
-.bet-card:active{transform:scale(0.97)}
-.team-turn{position:relative}
-.team-turn.active::after{content:'';position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);width:8px;height:8px;border-radius:50%;background:#7C3AED;box-shadow:0 0 12px rgba(124,58,237,0.5)}
-@media(max-width:640px){.slot-card{border-radius:1rem}.btn-opt{font-size:0.85rem;padding:12px 14px}}
-@media(prefers-reduced-motion:reduce){.slot-card{animation:none!important}.btn-opt{animation:none!important;opacity:1!important;transform:none!important}.bet-card{animation:none!important}}
+.bet-card:active{transform:scale(.97)}
+.bet-card-emoji{font-size:2rem;margin-bottom:8px}
+.bet-card-title{font-size:1.1rem;font-weight:900;color:var(--gray-800)}
+.bet-card-pts{font-size:.85rem;font-weight:700;color:var(--gray-400);margin-top:4px}
+.bet-card-desc{font-size:.7rem;font-weight:600;color:var(--gray-300);margin-top:6px}
+.bet-cancel{display:block;margin:16px auto 0;font-size:.75rem;font-weight:700;color:var(--gray-400);background:none;border:none;cursor:pointer;transition:color .2s;font-family:inherit}
+.bet-cancel:hover{color:var(--gray-600)}
+
+/* ═══ QUESTION ═══ */
+.q-section{text-align:center;margin-bottom:16px}
+.q-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:999px;font-size:.65rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.q-badge.a{background:var(--violet-bg);color:var(--violet)}
+.q-badge.b{background:var(--emerald-bg);color:var(--emerald)}
+.q-text{font-size:1rem;font-weight:700;color:var(--gray-800);line-height:1.5}
+.q-reveal-area{display:flex;flex-direction:column;align-items:center;gap:12px}
+.btn-reveal{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:1.3rem;font-weight:900;font-size:.85rem;color:#fff;background:linear-gradient(135deg,var(--violet),#6D28D9);border:none;cursor:pointer;box-shadow:0 6px 20px rgba(124,58,237,.25);transition:all .2s var(--ease-bounce);font-family:inherit}
+.btn-reveal:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 10px 28px rgba(124,58,237,.3)}
+.btn-reveal:active{transform:scale(.97)}
+.btn-reveal svg{flex-shrink:0}
+
+/* ═══ TIMER ═══ */
+.timer-area{display:flex;flex-direction:column;align-items:center;margin-top:12px}
+.timer-ring-wrap{position:relative;width:72px;height:72px}
+.timer-svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.timer-ring-bg{fill:none;stroke:var(--gray-200);stroke-width:6}
+.timer-ring-prog{fill:none;stroke:var(--violet);stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke .3s}
+.timer-ring-prog.danger{stroke:var(--rose)}
+.timer-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:900;color:var(--gray-800)}
+.timer-text.danger{color:var(--rose)}
+
+/* ═══ OPTIONS ═══ */
+.options-area{margin-top:14px;display:flex;flex-direction:column;gap:8px}
+.btn-opt{width:100%;padding:12px 16px;text-align:left;background:#fff;border:2.5px solid var(--gray-200);color:var(--gray-800);font-family:inherit;font-size:.88rem;font-weight:700;border-radius:1rem;cursor:pointer;transition:all .2s var(--ease-bounce);opacity:0;transform:scale(.7) translateY(10px);animation:optPop .35s var(--ease-bounce) forwards;line-height:1.35}
+.btn-opt:nth-child(1){animation-delay:.05s}
+.btn-opt:nth-child(2){animation-delay:.12s}
+.btn-opt:nth-child(3){animation-delay:.19s}
+.btn-opt:nth-child(4){animation-delay:.26s}
+.btn-opt:hover:not(:disabled){border-color:var(--violet);background:var(--violet-bg);transform:translateY(-2px) scale(1.01)}
+.btn-opt:active:not(:disabled){transform:scale(.98)}
+.btn-opt:disabled{cursor:default;opacity:.7}
+.btn-opt.correct{border-color:var(--success)!important;background:var(--success-bg)!important;color:#065f46!important}
+.btn-opt.wrong{border-color:var(--rose)!important;background:var(--rose-bg)!important;color:#991b1b!important;opacity:.65}
+.opt-letter{font-weight:900;color:var(--violet);margin-right:3px}
+
+/* ═══ RESULT ═══ */
+.result-icon{display:inline-flex;align-items:center;justify-content:center;width:60px;height:60px;border-radius:50%;font-size:1.8rem;margin-bottom:12px}
+.result-icon.correct-icon{background:var(--success-bg);color:var(--success)}
+.result-icon.wrong-icon{background:var(--rose-bg);color:var(--rose)}
+.result-title{font-size:1.3rem;font-weight:900}
+.result-title.correct-title{color:#065f46}
+.result-title.wrong-title{color:#991b1b}
+.result-sub{font-size:.8rem;font-weight:700;color:var(--gray-400);margin-top:4px}
+.result-answer-box{background:var(--gray-50);border-radius:1.2rem;padding:16px;margin:16px 0;border:1px solid var(--gray-100);animation:fadeUp .4s var(--ease-bounce)}
+.result-answer-box-label{font-size:.65rem;font-weight:900;color:var(--gray-400);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.result-answer-text{font-size:.9rem;font-weight:700;color:var(--gray-800)}
+.explanation-box{background:var(--amber-bg);border-radius:1.2rem;padding:16px;border:1px solid var(--amber-border);animation:fadeUp .5s var(--ease-bounce)}
+.explanation-box-label{display:flex;align-items:center;gap:6px;font-size:.65rem;font-weight:900;color:#92400e;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.explanation-box p{font-size:.82rem;font-weight:600;color:#78350f;line-height:1.5}
+.btn-continue{width:100%;padding:14px;border:none;border-radius:1.2rem;font-weight:900;font-size:.85rem;color:#fff;cursor:pointer;transition:all .2s var(--ease-bounce);font-family:inherit;margin-top:16px}
+.btn-continue:hover{opacity:.9;transform:translateY(-2px)}
+.btn-continue:active{transform:scale(.97)}
+
+/* ═══ REVIEW ═══ */
+.review-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.review-icon{font-size:1.3rem}
+.review-header h2{font-size:1.1rem;font-weight:900;color:var(--gray-800)}
+.review-slot-badge{font-size:.6rem;font-weight:900;padding:3px 10px;border-radius:999px;background:var(--gray-100);color:var(--gray-500);margin-left:auto}
+.review-q-text{font-size:.95rem;font-weight:700;color:var(--gray-800);line-height:1.5;margin-bottom:12px;background:var(--gray-50);border-radius:1rem;padding:14px;border:1px solid var(--gray-100)}
+.review-answers{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.review-answer{padding:10px 14px;border-radius:.9rem;font-size:.82rem;font-weight:700;border:2px solid var(--gray-200);display:flex;align-items:center;gap:8px}
+.review-answer.selected-correct{background:var(--success-bg);border-color:var(--success);color:#065f46}
+.review-answer.selected-wrong{background:var(--rose-bg);border-color:var(--rose);color:#991b1b}
+.review-answer.correct-answer{background:var(--success-bg);border-color:var(--success);color:#065f46;opacity:.7}
+.review-answer-pts{font-size:.75rem;font-weight:700;color:var(--gray-500);margin-bottom:8px;padding:6px 12px;border-radius:999px;background:var(--gray-50);display:inline-block}
+.review-change-section{margin-top:12px;padding-top:12px;border-top:1px solid var(--gray-100)}
+.review-change-title{font-size:.75rem;font-weight:900;color:var(--gray-500);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
+.review-options{display:flex;flex-direction:column;gap:6px}
+.review-opt{padding:10px 14px;border-radius:.9rem;font-size:.82rem;font-weight:700;border:2.5px solid var(--gray-200);background:#fff;cursor:pointer;transition:all .2s var(--ease-bounce);font-family:inherit;text-align:left;color:var(--gray-800)}
+.review-opt:hover{border-color:var(--violet);background:var(--violet-bg);transform:translateX(4px)}
+.review-opt:active{transform:scale(.98)}
+.review-opt.current-sel{border-color:var(--violet);background:var(--violet-bg)}
+.review-opt.mark-correct{border-color:var(--success)!important;background:var(--success-bg)!important;color:#065f46!important}
+.btn-close-modal{width:100%;padding:12px;border-radius:1rem;font-weight:800;font-size:.8rem;background:var(--gray-100);color:var(--gray-500);border:none;cursor:pointer;transition:all .2s;font-family:inherit;margin-top:12px}
+.btn-close-modal:hover{background:var(--gray-200);color:var(--gray-700)}
+
+/* ═══ SUDDEN DEATH ═══ */
+.sd-container{text-align:center}
+.sd-icon{font-size:3rem;margin-bottom:12px}
+.sd-title{font-size:1.5rem;font-weight:900;color:#92400e;margin-bottom:4px}
+.sd-sub{font-size:.8rem;font-weight:700;color:var(--amber);margin-bottom:16px}
+.sd-q-box{background:var(--gray-50);border-radius:1.2rem;padding:16px;margin-bottom:16px;border:1px solid var(--gray-100)}
+.sd-q-text{font-size:.95rem;font-weight:700;color:var(--gray-800);line-height:1.5}
+.sd-options{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.winner-icon{font-size:4rem;margin-bottom:12px}
+.winner-name{font-size:1.8rem;font-weight:900;color:#92400e}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:600px){
+  .slot-grid{gap:8px}
+  .slot-num{font-size:1rem}
+  .bet-cards{flex-direction:column}
+  .teams-row{flex-direction:column}
+  .score-number{font-size:1.4rem}
+  .btn-score{font-size:.55rem;padding:3px 6px}
+  .team-panel{padding:6px 8px}
+  .modal-container{padding:20px 16px;border-radius:1.3rem}
+  .welcome-title{font-size:1.6rem}
+}
+@media(prefers-reduced-motion:reduce){
+  .slot-card{animation:none!important}
+  .btn-opt,.bet-card{animation:none!important;opacity:1!important;transform:none!important}
+}
 </style>
 </head>
 <body>
 
-<div id="app" class="min-h-screen bg-[#FDFBF7] bg-dots flex flex-col">
+<!-- ═══ SCREEN: WELCOME ═══ -->
+<div id="screen-welcome" class="screen welcome-screen">
+  <div class="welcome-inner">
+    <div class="welcome-logo">
+      <div class="welcome-emoji">📖</div>
+      <div class="welcome-title">Estudio <span>Bíblico</span></div>
+      <div class="welcome-sub">1 JUAN 2 · 25 PREGUNTAS</div>
+    </div>
+    <div class="teams-row">
+      <div class="team-card card-a">
+        <div class="card-avatar">⚡</div>
+        <div class="card-label">Equipo A</div>
+        <input id="input-team-a" class="team-input" type="text" maxlength="16" placeholder="Ej: Los Leones" autocomplete="off">
+      </div>
+      <div class="team-card card-b">
+        <div class="card-avatar">🔥</div>
+        <div class="card-label">Equipo B</div>
+        <input id="input-team-b" class="team-input" type="text" maxlength="16" placeholder="Ej: Las Águilas" autocomplete="off">
+      </div>
+    </div>
+    <button id="btn-start" class="btn-start">🚀 ¡Comenzar!</button>
+    <div class="welcome-footnote">Timer 20s · Respuesta incorrecta resta puntos</div>
+  </div>
+</div>
 
-  <!-- ===== SCOREBOARD ===== -->
-  <header class="sticky top-0 z-30 bg-[#FDFBF7]/95 backdrop-blur-md border-b border-gray-100/80 px-3 sm:px-6 py-3">
-    <div class="max-w-4xl mx-auto flex items-center gap-2 sm:gap-4">
-      
-      <!-- Team A -->
-      <div id="panel-a" class="team-turn flex-1 flex flex-wrap items-center gap-1.5 sm:gap-2 p-2.5 sm:p-3 rounded-2xl transition-all duration-300 border-2 border-transparent bg-white/60" style="box-shadow:0 2px 8px rgba(0,0,0,0.04)">
-        <span id="team-a-name" class="text-xs sm:text-sm font-extrabold text-gray-500 uppercase tracking-wider min-w-0 truncate">Equipo A</span>
-        <div id="team-a-indicator" class="hidden w-2 h-2 rounded-full bg-violet-500 shadow-[0_0_8px_rgba(124,58,237,0.5)]"></div>
-        <span id="score-a" class="text-2xl sm:text-3xl font-black text-gray-900 ml-auto tabular-nums min-w-[3rem] text-right">0</span>
-        <div class="flex gap-1 ml-1">
-          <button class="btn-float text-violet-600 bg-violet-50 border-violet-200 hover:bg-violet-100" data-team="a" data-pts="100">+100</button>
-          <button class="btn-float text-violet-600 bg-violet-50 border-violet-200 hover:bg-violet-100" data-team="a" data-pts="200">+200</button>
-          <button class="btn-float text-rose-500 bg-rose-50 border-rose-200 hover:bg-rose-100" data-team="a" data-pts="-100">−100</button>
-          <button class="btn-float text-rose-500 bg-rose-50 border-rose-200 hover:bg-rose-100" data-team="a" data-pts="-200">−200</button>
+<!-- ═══ SCREEN: BOARD ═══ -->
+<div id="screen-board" class="screen hidden">
+
+  <!-- Scoreboard -->
+  <header class="scoreboard">
+    <div class="scoreboard-inner">
+
+      <div id="panel-a" class="team-panel active-a">
+        <span id="team-a-name" class="team-label">Equipo A</span>
+        <span id="dot-a" class="team-dot dot-a"></span>
+        <span id="score-a" class="score-number">0</span>
+        <div class="score-btns">
+          <button class="btn-score plus-a" data-team="a" data-pts="100">+100</button>
+          <button class="btn-score plus-a" data-team="a" data-pts="200">+200</button>
+          <button class="btn-score minus" data-team="a" data-pts="-100">−100</button>
+          <button class="btn-score minus" data-team="a" data-pts="-200">−200</button>
         </div>
       </div>
 
-      <!-- VS / Turn -->
-      <div class="flex flex-col items-center gap-0.5 flex-shrink-0">
-        <span class="text-[0.6rem] font-black text-gray-300 uppercase tracking-[2px]">vs</span>
-        <span id="turn-badge" class="text-[0.55rem] font-black uppercase tracking-wider px-2 py-1 rounded-full bg-violet-100 text-violet-700 whitespace-nowrap">Turno A</span>
-      </div>
+      <div class="vs-badge">VS</div>
+      <span id="turn-badge" class="turn-badge" style="background:var(--violet-bg);color:var(--violet)">TURNO A</span>
 
-      <!-- Team B -->
-      <div id="panel-b" class="team-turn flex-1 flex flex-wrap items-center gap-1.5 sm:gap-2 p-2.5 sm:p-3 rounded-2xl transition-all duration-300 border-2 border-transparent bg-white/60" style="box-shadow:0 2px 8px rgba(0,0,0,0.04)">
-        <span id="team-b-name" class="text-xs sm:text-sm font-extrabold text-gray-500 uppercase tracking-wider min-w-0 truncate">Equipo B</span>
-        <div id="team-b-indicator" class="hidden w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(5,150,105,0.5)]"></div>
-        <span id="score-b" class="text-2xl sm:text-3xl font-black text-gray-900 ml-auto tabular-nums min-w-[3rem] text-right">0</span>
-        <div class="flex gap-1 ml-1">
-          <button class="btn-float text-emerald-600 bg-emerald-50 border-emerald-200 hover:bg-emerald-100" data-team="b" data-pts="100">+100</button>
-          <button class="btn-float text-emerald-600 bg-emerald-50 border-emerald-200 hover:bg-emerald-100" data-team="b" data-pts="200">+200</button>
-          <button class="btn-float text-rose-500 bg-rose-50 border-rose-200 hover:bg-rose-100" data-team="b" data-pts="-100">−100</button>
-          <button class="btn-float text-rose-500 bg-rose-50 border-rose-200 hover:bg-rose-100" data-team="b" data-pts="-200">−200</button>
+      <div id="panel-b" class="team-panel inactive">
+        <span id="team-b-name" class="team-label">Equipo B</span>
+        <span id="dot-b" class="team-dot dot-b" style="display:none"></span>
+        <span id="score-b" class="score-number">0</span>
+        <div class="score-btns">
+          <button class="btn-score plus-b" data-team="b" data-pts="100">+100</button>
+          <button class="btn-score plus-b" data-team="b" data-pts="200">+200</button>
+          <button class="btn-score minus" data-team="b" data-pts="-100">−100</button>
+          <button class="btn-score minus" data-team="b" data-pts="-200">−200</button>
         </div>
       </div>
 
     </div>
   </header>
 
-  <!-- ===== BOARD AREA ===== -->
-  <main class="flex-1 flex flex-col items-center px-4 sm:px-6 py-6 sm:py-10 max-w-4xl mx-auto w-full">
-    
-    <!-- Title -->
-    <div class="text-center mb-6 sm:mb-8">
-      <h1 class="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">
-        Quiz <span class="text-violet-600">Bíblico</span>
-      </h1>
-      <p class="text-xs sm:text-sm font-semibold text-gray-400 mt-1 uppercase tracking-wider">1 Juan 2 · 25 preguntas</p>
+  <!-- Board -->
+  <div class="board-area">
+    <div class="board-title">
+      <h1>Estudio <span>Bíblico</span></h1>
+      <p>1 Juan 2 · 25 preguntas</p>
     </div>
 
-    <!-- 5x5 Grid -->
-    <div id="board" class="grid grid-cols-5 gap-3 sm:gap-4 w-full max-w-xl mx-auto mb-6"></div>
+    <div id="slot-grid" class="slot-grid"></div>
 
-    <!-- Progress & Reset -->
-    <div class="flex items-center justify-center gap-3 flex-wrap">
-      <div id="progress-chip" class="text-xs font-bold text-gray-400 bg-white/80 rounded-full px-4 py-2 border border-gray-100 shadow-sm">
-        0 / 25 respondidas
-      </div>
-      <button id="btn-reset" class="text-xs font-bold text-gray-400 bg-white/80 rounded-full px-4 py-2 border border-gray-100 shadow-sm hover:bg-rose-50 hover:text-rose-500 hover:border-rose-200 transition-all duration-200">
-        ↺ Reiniciar
-      </button>
+    <div class="board-footer">
+      <div id="progress-chip" class="progress-chip">0 / 25 respondidas</div>
+      <button id="btn-reset" class="btn-reset">↺ Reiniciar</button>
     </div>
 
-    <!-- Sudden Death Button (hidden by default) -->
-    <div id="sudden-death-area" class="hidden mt-8 text-center">
-      <button id="btn-desempate" class="relative inline-flex items-center gap-3 px-10 py-5 rounded-3xl font-black text-2xl sm:text-3xl text-amber-900 bg-gradient-to-br from-amber-300 to-amber-500 border-2 border-amber-400 shadow-2xl animate-[pulseGold_2s_ease-in-out_infinite] hover:scale-105 transition-transform duration-300" style="box-shadow:0 0 40px rgba(245,158,11,0.3)">
-        <span class="text-3xl">🏆</span> ¡DESEMPATE!
-      </button>
+    <div id="sudden-death-area" class="hidden" style="margin-top:20px;text-align:center">
+      <button id="btn-desempate" class="btn-desempate">🏆 ¡DESEMPATE!</button>
     </div>
-
-  </main>
-</div>
-
-
-<!-- ===== MODAL OVERLAY ===== -->
-<div id="modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
-  <div class="modal-backdrop" id="modal-backdrop"></div>
-  <div id="modal-container" class="relative z-50 w-full max-w-lg max-h-[90vh] overflow-y-auto bg-white rounded-3xl shadow-2xl border border-gray-100 p-6 sm:p-8 animate-[fadeUp_0.35s_var(--ease-bounce)]">
-    
-    <!-- Dynamic content injected here -->
-    <div id="modal-body"></div>
-
   </div>
 </div>
 
+<!-- ═══ MODAL ═══ -->
+<div id="modal" class="modal-overlay hidden">
+  <div class="modal-backdrop" id="modal-backdrop"></div>
+  <div class="modal-container" id="modal-body"></div>
+</div>
 
 <script>
 // ═══════════════════════════════════════════════════════════════
-//  QUESTIONS — 1 Juan 2 (25 items)
+//  QUESTIONS — 1 Juan 2 (textual)
 // ═══════════════════════════════════════════════════════════════
 const RAW_QUESTIONS = [
-  {"id":1,"q":"¿Cuál es la perfecta regla de Dios para Su pueblo expresada en la primera carta de Juan?","o":["A) Que pequéis lo menos que podáis a lo largo de la vida.","B) Os escribo estas cosas para que no pequéis.","C) Que no os preocupéis por las faltas porque ya fuisteis salvos."],"correct":"B","exp":"Dios es santo y perfecto; por lo tanto, Su norma no puede tolerar el pecado ni en el más mínimo grado. No dice 'pequen lo menos posible', sino que establece el estándar de la perfección moral."},
-  {"id":2,"q":"Un hermano de la iglesia comete una falta grave y cae en un desánimo tan profundo que piensa que Dios ha dejado de ser su Padre. ¿Qué verdad fundamental sobre su nueva naturaleza ha olvidado?","o":["A) Que debe volver a nacer de nuevo en el espíritu para recuperar su salvación.","B) Que es necesario pasar por un tiempo de disciplina oficial antes de volver a llamarse hijo.","C) Que el pecado quebranta la comunión con Dios, pero el nacimiento espiritual no se puede deshacer; la relación de padre e hijo permanece.","D) Que si un hijo deshonra a sus padres biológicos en la tierra, automáticamente deja de ser su hijo de sangre."],"correct":"C","exp":"Cuando una persona nace de nuevo, la relación biológica espiritual con Dios queda sellada para siempre. El pecado interrumpe la armonía y la comunión diaria, pero jamás destruye la identidad de hijo."},
-  {"id":3,"q":"La función de Jesucristo como nuestro 'Abogado' ante el Padre consiste en convencer a Dios de que el pecado que cometimos en realidad no fue tan malo.","o":["A) Verdadero","B) Falso"],"correct":"B","exp":"Es falso porque el trabajo del Abogado no es minimizar el pecado. Su función es acudir en nuestra ayuda en el momento del fracaso, defendiéndonos frente a las acusaciones al señalar Su propia obra consumada en el Calvario y guiándonos hacia la confesión genuina."},
-  {"id":4,"q":"¿Qué significa que Jesucristo es la 'propiciación' por nuestras faltas?","o":["A) Que es un intermediario que pide lástima y clemencia sin haber pagado el precio real de la culpa.","B) Que pagó completamente por nosotros, satisfaciendo las demandas de la justicia divina y eliminando toda barrera para restaurar la comunión.","C) Que reduce el castigo de forma progresiva a medida que sumamos buenas acciones en la iglesia."],"correct":"B","exp":"Al morir en la cruz, Cristo cumplió con lo que exigía la justicia de Dios contra el pecado. Pagó la deuda con Su propio sacrificio, lo que permite que Dios nos muestre misericordia de forma justa."},
-  {"id":5,"q":"Durante un evangelismo, una persona afirma: 'Si la muerte de Jesús es suficiente para todo el mundo, entonces toda la humanidad ya es salva de forma automática'. ¿Cuál es la respuesta correcta para aclarar este argumento?","o":["A) Su obra es suficiente en valor para salvar a todos los hombres, pero solo es eficiente (efectiva) en aquellos que realmente ponen su confianza en Él.","B) Sí, toda la humanidad es salva automáticamente desde el momento en que se consumó el sacrificio en la cruz.","C) El sacrificio en realidad no es suficiente para todos, sino únicamente para un grupo selecto determinado desde el principio."],"correct":"A","exp":"El valor del sacrificio de Cristo no tiene límites y por eso el evangelio se ofrece a todo el mundo sin distinción; sin embargo, ese beneficio solo se activa y se hace efectivo cuando el individuo decide creer y confiar personalmente en el Salvador."},
-  {"id":6,"q":"En el grupo de jóvenes, alguien afirma tener un conocimiento espiritual superior y muy profundo, pero en el día a día muestra un total desinterés por obedecer los mandamientos del Señor. ¿Cómo se califica espiritualmente a una persona con esta actitud?","o":["A) Como un maestro incomprendido que expresa su fe con un estilo de vida diferente.","B) Como un creyente inmaduro al que simplemente hay que tenerle paciencia.","C) Es mentiroso, y la verdad no está en él."],"correct":"C","exp":"Pretender tener una relación íntima o un conocimiento avanzado de Dios mientras se vive en desobediencia abierta es una contradicción absoluta. La verdadera comunión se evidencia en el deseo de hacer Su voluntad."},
-  {"id":7,"q":"¿Cuál es el orden de la triple progresión de la obediencia que caracteriza la vida de un creyente?","o":["A) Estudiar teología avanzada, debatir con sectas y liderar ministerios grandes.","B) Guardar sus mandamientos, guardar Su palabra, y andar como Él anduvo.","C) Entregar ofrendas, apartar los diezmos y asistir puntualmente a todas las reuniones."],"correct":"B","exp":"Existe un avance claro: primero se obedecen los mandamientos explícitos escritos; luego se avanza a cuidar Su palabra por el deseo profundo de agradarle en todo; y finalmente se llega a la meta más alta, que es imitar por completo el estilo de vida de Jesús."},
-  {"id":8,"q":"Cuando se afirma que 'el amor de Dios se ha perfeccionado' en la vida de alguien, ¿a qué tipo de amor se está haciendo referencia?","o":["A) Al amor de Dios hacia nosotros, el cual alcanza su meta y objetivo al producir frutos de obediencia.","B) Al amor humano hacia Dios, que se vuelve impecable, místico y libre de cualquier distracción.","C) Al amor afectivo y emocional que debemos sentir de forma natural por toda la sociedad mundana."],"correct":"A","exp":"No se trata de la imperfección de nuestro amor hacia Él, sino de que el amor que Dios nos demostró cumple su propósito final cuando logra transformar nuestro corazón y nos lleva a obedecerle voluntariamente."},
-  {"id":9,"q":"Una hermana se siente muy frustrada porque intenta imitar la vida de Jesucristo basándose únicamente en su propia fuerza de voluntad y siempre termina fallando. ¿Cuál es la pauta correcta para solucionar esto?","o":["A) Comprender que esa norma era exclusiva para los apóstoles y que es normal bajar el estándar.","B) Esforzarse el doble, hacer ayunos extremos y realizar votos de sacrificio personal.","C) Rendir la vida sin reservas al Espíritu Santo y permitir que Cristo viva Su vida en y por medio de nosotros."],"correct":"C","exp":"Vivir como Jesús vivió es humanamente imposible con recursos propios. La responsabilidad del cristiano es consagrarse por completo y dejar que el Espíritu Santo opere y manifieste la vida de Cristo a través de sus acciones."},
-  {"id":10,"q":"¿Qué diferencia práctica existe entre 'guardar los mandamientos' y la etapa superior de 'guardar Su palabra'?","o":["A) Memorizar capítulos enteros de las Escrituras para no equivocarse al hablar en público.","B) Estudiar a fondo los idiomas originales de la Biblia como el griego antiguo y el hebreo.","C) Seguir estrictamente las costumbres históricas y tradiciones de la iglesia local.","D) No limitarse a cumplir solo lo que está explícitamente escrito, sino buscar activamente hacer aquello que sabemos que le causa agrado al Señor."],"correct":"D","exp":"Guardar los mandamientos es la obediencia básica a las reglas escritas. Guardar Su palabra implica una sintonía de amor tan profunda que el creyente busca complacer el corazón de Dios incluso en los detalles que no son un mandato directo."},
-  {"id":11,"q":"¿Por qué el mandamiento de amarse los unos a los otros es calificado como un mandamiento 'antiguo'?","o":["A) Porque el Señor Jesús lo enseñó y lo enfatizó a Sus discípulos desde el comienzo mismo de Su ministerio terrenal.","B) Porque formaba parte de los tratados morales escritos por los antiguos filósofos de Grecia.","C) Porque se trata de una instrucción que deben aplicar únicamente los líderes de mayor edad en la congregación."],"correct":"A","exp":"No es una innovación de último minuto ni una doctrina extraña; los creyentes conocían esta exigencia del amor mutuo desde el primer instante en que escucharon el mensaje de Cristo."},
-  {"id":12,"q":"El mandamiento del amor se convirtió en algo 'nuevo' porque Cristo no solo lo enseñó de forma teórica, sino que dio un ejemplo viviente de él, y ahora ese amor se encarna en la vida de los creyentes.","o":["A) Verdadero","B) Falso"],"correct":"A","exp":"Es verdadero porque antes de Jesús el mundo no había visto un amor tan perfecto y sacrificial. Ahora es nuevo porque no es solo un ideal externo, sino una realidad que los cristianos (que antes vivían en odios y pasiones) experimentan y reflejan en la iglesia."},
-  {"id":13,"q":"Un líder de la iglesia critica, menosprecia y aborrece de forma constante a los hermanos de otros departamentos argumentando que lo hace por 'celo doctrinal' y defensa de la verdad. ¿Cuál es su situación espiritual real?","o":["A) Es un creyente muy maduro y firme, aunque con un temperamento difícil de tratar.","B) Está todavía en tinieblas y anda en tinieblas; se comporta como un inconverso.","C) Es un hermano espiritual que está pasando por una prueba severa de paciencia."],"correct":"B","exp":"El aborrecimiento hacia los hermanos en la fe es una señal inequívoca de que la luz de Cristo no habita en esa persona. El diagnóstico no es una simple recaída o mal carácter; es una evidencia de que sigue en su estado original de ceguera espiritual."},
-  {"id":14,"q":"¿Qué dos grandes consecuencias e impactos produce en la vida de un cristiano el hecho de amar activamente a su hermano?","o":["A) Recibe el aplauso unánime de la congregación y se le garantiza el éxito financiero en sus proyectos.","B) Queda blindado de forma automática contra cualquier tipo de crítica, persecución o insulto del mundo exterior.","C) Permanece en la luz, y en él no hay tropiezo, lo que significa que ni corre peligro de caer, ni hace que otros tropiecen."],"correct":"C","exp":"Vivir en amor fraternal alumbra el propio camino del creyente evitando que tropiece por el egoísmo. Además, al haber coherencia entre lo que profesa y lo que hace, se convierte en un testimonio limpio que no causa tropiezo a los demás."},
-  {"id":15,"q":"Cuando en la comunidad cristiana surgen debates provocados por maestros que presumen de tener 'nuevas luces intelectuales' o revelaciones modernas, ¿cuál es la instrucción para discernir lo verdadero?","o":["A) Volver al principio y evaluar todo bajo las enseñanzas originales de Jesucristo.","B) Buscar corrientes teológicas aún más novedosas para mantenerse actualizados con los tiempos.","C) Someter el asunto a una votación democrática para seguir la opinión de la mayoría de la congregación."],"correct":"A","exp":"La seguridad frente al error consiste en aferrarse a la verdad fundacional recibida desde el principio. Si una enseñanza contradice o añade cosas ajenas al mensaje original de Cristo y los apóstoles, debe ser rechazada de inmediato."},
-  {"id":16,"q":"Al abarcar a todos los miembros de la familia de Dios bajo la expresión general de 'hijitos', ¿cuál es la bendición común que define a todo el grupo?","o":["A) Que cuentan con muy pocos meses de experiencia tras haber conocido el evangelio.","B) Que todavía no tienen la capacidad de comprender los aspectos más profundos de la doctrina bíblica.","C) Que sus pecados les han sido completamente perdonados por causa de Su nombre."],"correct":"C","exp":"En este uso específico, la palabra no denota inmadurez o infancia espiritual, sino la condición legal y gloriosa de todos los que pertenecen a la familia de Dios: la total remisión de sus pecados gracias a los méritos de Cristo."},
-  {"id":17,"q":"Un grupo de personas en la congregación resalta por su fuerza espiritual, su vigor para el servicio, su capacidad para resistir los ataques del enemigo y su constante firmeza en la batalla del día a día. ¿A qué etapa de desarrollo corresponden?","o":["A) A los jóvenes, que se caracterizan por la fuerza y por haber vencido al maligno.","B) A los hijitos en el sentido exclusivo de ser bebés recién nacidos en la fe.","C) A los padres espirituales que ya han cumplido sus metas y buscan el reposo de las actividades."],"correct":"A","exp":"Los 'jóvenes' espirituales representan el periodo de conflicto, resistencia y victoria sobre las tentaciones del diablo. Han aprendido el secreto de vencer mediante la fortaleza que el Señor les otorga."},
-  {"id":18,"q":"Dentro del crecimiento de la familia de Dios, ¿cuál es el rasgo distintivo que identifica a los 'padres' en la fe?","o":["A) Son líderes con altos cargos administrativos que se encargan del control financiero de la iglesia.","B) Son creyentes maduros cuya experiencia se basa en haber conocido de forma íntima al que es desde el principio.","C) Son todas aquellas personas que superan una edad física avanzada cronológicamente dentro del templo.","D) Son los servidores que se dedican de forma exclusiva al cuidado y la enseñanza infantil los domingos."],"correct":"B","exp":"La madurez espiritual en la etapa de los 'padres' no se mide por la edad del cuerpo ni por títulos humanos, sino por una larga, profunda y sólida comunión con la persona del Hijo de Dios, estando plenamente satisfechos en Él."},
-  {"id":19,"q":"El secreto de la victoria espiritual para vencer al maligno, siguiendo el ejemplo de Jesús en el desierto, consiste en usar la Palabra de Dios que permanece en el creyente para repeler los ataques.","o":["A) Verdadero","B) Falso"],"correct":"A","exp":"Es verdadero porque la única manera de derrotar los engaños y asaltos de Satanás es teniendo las Escrituras guardadas en el corazón y listas para ser aplicadas con autoridad, tal como lo demostró el Señor Jesús al responder con un 'Escrito está'."},
-  {"id":20,"q":"Cuando el término 'hijitos' se utiliza específicamente para describir a los bebés en la fe (a diferencia de los jóvenes y los padres), ¿cuál es su conocimiento espiritual básico?","o":["A) Que dependen por completo del consuelo constante y la atención del liderazgo de la iglesia.","B) Que no poseen la madurez necesaria para asumir ninguna tarea o responsabilidad práctica en las reuniones.","C) Que, a pesar de que todavía no conocen doctrinas profundas, conocen de forma real al Padre."],"correct":"C","exp":"Un bebé espiritual puede carecer de un conocimiento teológico amplio o de experiencia en el combate de la fe, pero posee la certeza más hermosa de la salvación: reconoce de manera íntima a Dios como su Padre celestial."},
-  {"id":21,"q":"Si definimos de manera precisa el peligro del 'mundo' del cual se nos advierte que no debemos amar, ¿a qué se refiere exactamente?","o":["A) A la creación física, los paisajes, la naturaleza y el planeta que Dios diseñó para nosotros.","B) Al sistema y sociedad humana organizada bajo principios falsos, deseos bajos y egoísmo para intentar ser feliz sin Cristo.","C) Al desarrollo de las ciencias exactas, el conocimiento académico y el avance tecnológico de la sociedad."],"correct":"B","exp":"El 'mundo' en este contexto no es la geografía ni las personas en sí, sino la estructura cultural, de valores y entretenimientos creada por la humanidad caída para funcionar de espaldas a Dios y excluir al Señor Jesús."},
-  {"id":22,"q":"Los apetitos corporales sensuales de nuestra vieja naturaleza, la codicia por las cosas que entran por la vista y la impía ambición de exhibirse para buscar la gloria propia corresponden a qué tres elementos de la mundanalidad:","o":["A) Los deseos de la carne, la codicia de los ojos y la soberbia de la vida.","B) La búsqueda de riquezas, la fama secular y el control del poder político.","C) Los problemas de la glotonería, la pereza espiritual y la vanidad externa del vestir."],"correct":"A","exp":"Estos tres componentes resumen todo lo que el sistema del mundo ofrece. Se ilustraron perfectamente desde la caída en el Edén con Eva y siguen siendo las tres avenidas principales de tentación que utiliza el enemigo."},
-  {"id":23,"q":"Un grupo de maestros que participaba activamente en las reuniones de la iglesia decide abandonar la congregación por completo para formar una secta con supuestas 'verdades ocultas'. ¿Qué demostró realmente esa salida con respecto a su fe?","o":["A) Que el liderazgo original cometió una injusticia y ellos necesitaban libertad para expandirse de forma independiente.","B) Que la teología original de la iglesia estaba incompleta y ellos consiguieron una iluminación superior.","C) Que salieron para que se manifestara que en realidad nunca pertenecieron de corazón al grupo; la fe verdadera tiene la cualidad de permanecer."],"correct":"C","exp":"Quien ha nacido de nuevo de forma genuina persevera en el camino del Señor. La deserción y el abandono total de la sana doctrina por parte de estos falsos maestros demostró que su profesión de fe externa era falsa y que jamás fueron verdaderamente salvos."},
-  {"id":24,"q":"La unción del Espíritu Santo que el creyente recibe en el instante en que es salvo permanece en él de forma continua y nunca le será quitada.","o":["A) Verdadero","B) Falso"],"correct":"A","exp":"Es verdadero porque la Biblia declara explícitamente que la unción permanece en vosotros. Es una garantía y una promesa de seguridad interna de que el Espíritu Santo sella al creyente de forma definitiva y no lo abandona cuando pasa por dificultades."},
-  {"id":25,"q":"Una persona afirma en las redes sociales que tiene una devoción inmensa por Dios el Padre y que le adora constantemente, pero que rechaza de forma rotunda la deidad de Jesús por considerarla un mito. ¿Cuál es el veredicto espiritual sobre esta posición?","o":["A) Su adoración al Padre sigue siendo totalmente válida y aceptada en el cielo si sus intenciones son sinceras.","B) Es una postura teológica respetable y comprensible dentro de la libertad de pensamiento actual de la iglesia.","C) Se trata de un problema menor que se soluciona leyendo libros de historia secular sobre la antigüedad.","D) Todo aquel que niega al Hijo tampoco tiene al Padre, ya que existe una unidad absoluta e inseparable entre ambos."],"correct":"D","exp":"Es imposible tener una relación con el Padre rechazando al Hijo. La deidad de Jesucristo es la base fundamental de la fe, y cualquiera que lo niegue se alinea con el espíritu del anticristo, quedando completamente fuera de la verdadera comunión con Dios."}
+  {"id":1,"q":"¿Cuál es el propósito explícito por el cual el apóstol escribe estas cosas en el versículo 1?","o":["A) Que pequéis lo menos posible.","B) Para que no pequéis.","C) Para abolir las leyes anteriores."],"correct":"B","exp":"El versículo 1 declara directamente: 'Estas cosas os escribo para que no pequéis', estableciendo la santidad como el estándar del creyente."},
+  {"id":2,"q":"Según el versículo 1, si alguno hubiere pecado, ¿qué provisión tenemos para con el Padre?","o":["A) Debemos realizar sacrificios y penitencias.","B) Abogado tenemos para con el Padre, a Jesucristo el justo.","C) Perdemos automáticamente la condición de hijos."],"correct":"B","exp":"El texto dice textualmente: 'Y si alguno hubiere pecado, abogado tenemos para con el Padre, a Jesucristo el justo'."},
+  {"id":3,"q":"El versículo 2 afirma que Jesucristo es la propiciación únicamente por nuestros pecados, excluyendo explícitamente al resto del mundo.","o":["A) Verdadero","B) Falso"],"correct":"B","exp":"Es falso. El versículo 2 dice textualmente: 'Y él es la propiciación por nuestros pecados; y no solamente por los nuestros, sino también por los de todo el mundo'."},
+  {"id":4,"q":"Según el versículo 3, ¿en qué conocemos que nosotros le hemos conocido?","o":["A) Si guardamos sus mandamientos.","B) Si experimentamos un sentimiento místico.","C) Si asistimos a todas las reuniones de la sinagoga."],"correct":"A","exp":"El versículo 3 establece una prueba clara y medible: 'Y en esto sabemos que nosotros le conocemos, si guardamos sus mandamientos'."},
+  {"id":5,"q":"¿Cómo califica textualmente el versículo 4 al que dice: 'Yo le conozco', y no guarda sus mandamientos?","o":["A) Como un cristiano inmaduro.","B) El tal es mentiroso, y la verdad no está en él.","C) Como un maestro con una perspectiva diferente."],"correct":"B","exp":"La Escritura es tajante en el versículo 4: 'El que dice: Yo le conozco, y no guarda sus mandamientos, el tal es mentiroso, y la verdad no está en él'."},
+  {"id":6,"q":"De acuerdo con el versículo 5, ¿en quién se ha perfeccionado verdaderamente el amor de Dios?","o":["A) En el que guarda su palabra.","B) En el que tiene más conocimiento teológico.","C) En el que realiza grandes donaciones."],"correct":"A","exp":"El versículo 5 dice: 'Pero el que guarda su palabra, en este verdaderamente el amor de Dios se ha perfeccionado'."},
+  {"id":7,"q":"¿Cuál es el deber literal de todo aquel que dice que permanece en Él, según el versículo 6?","o":["A) Enseñar con autoridad a los demás.","B) Debe andar como él anduvo.","C) Apartarse por completo de la sociedad física."],"correct":"B","exp":"El versículo 6 nos da la norma de conducta exacta: 'El que dice que permanece en él, debe andar como él anduvo'."},
+  {"id":8,"q":"En el versículo 7, ¿qué es textualmente 'el mandamiento antiguo'?","o":["A) La ley dada exclusivamente en el monte Sinaí.","B) La palabra que habéis oído desde el principio.","C) Los escritos de los antiguos sabios de oriente."],"correct":"B","exp":"El texto define el mandamiento antiguo diciendo: 'El mandamiento antiguo es la palabra que habéis oído desde el principio'."},
+  {"id":9,"q":"Según el versículo 8, ¿por qué el mandamiento se describe también como 'nuevo' en Cristo y en vosotros?","o":["A) Porque las tinieblas van pasando, y la luz verdadera ya alumbra.","B) Porque se abolieron todos los mandamientos anteriores.","C) Porque es una doctrina que nadie había escuchado jamás."],"correct":"A","exp":"El versículo 8 conecta la novedad del mandamiento con un hecho espiritual continuo: 'porque las tinieblas van pasando, y la luz verdadera ya alumbra'."},
+  {"id":10,"q":"Según el versículo 9, si alguien dice que está en la luz pero aborrece a su hermano, ¿cuál es su condición real?","o":["A) Está en un proceso de crecimiento.","B) Está todavía en tinieblas.","C) Es un líder con un temperamento firme."],"correct":"B","exp":"El versículo 9 no deja lugar a dudas: 'El que dice que está en la luz, y aborrece a su hermano, está todavía en tinieblas'."},
+  {"id":11,"q":"De acuerdo con el versículo 10, ¿qué consecuencia hay para el que ama a su hermano?","o":["A) Consigue el favor de toda la sociedad.","B) Permanece en la luz, y en él no hay tropiezo.","C) Es librado automáticamente de toda prueba."],"correct":"B","exp":"El texto del versículo 10 asocia el amor fraternal con la estabilidad espiritual: 'El que ama a su hermano, permanece en la luz, y en él no hay tropiezo'."},
+  {"id":12,"q":"¿Qué le sucede visual y espiritualmente al que aborrece a su hermano, según la descripción del versículo 11?","o":["A) Anda en tinieblas, y no sabe a dónde va, porque las tinieblas le han cegado los ojos.","B) Pierde temporalmente sus privilegios en la iglesia local.","C) Recibe una corrección de parte de los líderes principales."],"correct":"A","exp":"El versículo 11 describe los efectos de la falta de amor: '...anda en tinieblas, y no sabe a dónde va, porque las tinieblas le han cegado los ojos'."},
+  {"id":13,"q":"En el versículo 12, ¿por qué causa literal les escribe el apóstol a los 'hijitos'?","o":["A) Porque son los miembros más jóvenes del templo.","B) Porque vuestros pecados os han sido perdonados por su nombre.","C) Porque necesitan aprender las primeras letras de la ley."],"correct":"B","exp":"El versículo 12 fundamenta la carta a los hijitos en una realidad legal: 'os escribo a vosotros, hijitos, porque vuestros pecados os han sido perdonados por su nombre'."},
+  {"id":14,"q":"Según los versículos 13 y 14, ¿cuál es la característica que se repite al describir a los 'padres'?","o":["A) Que han acumulado grandes riquezas materiales.","B) Porque habéis conocido al que es desde el principio.","C) Que son los encargados de juzgar al pueblo."],"correct":"B","exp":"Tanto en el v. 13 como en el v. 14, la marca de los padres es idéntica: 'porque habéis conocido al que es desde el principio'."},
+  {"id":15,"q":"¿Por qué razones específicas se afirma en el versículo 14 que los 'jóvenes' son fuertes?","o":["A) Porque la palabra de Dios permanece en vosotros, y habéis vencido al maligno.","B) Porque tienen salud física y vigor corporal.","C) Porque han estudiado las tradiciones antiguas."],"correct":"A","exp":"El versículo 14 detalla la fuente de su fuerza espiritual: 'porque sois fuertes, y la palabra de Dios permanece en vosotros, y habéis vencido al maligno'."},
+  {"id":16,"q":"En el versículo 13, ¿qué se destaca acerca del conocimiento de los 'hijitos'?","o":["A) Que aún ignoran los misterios del reino.","B) Porque habéis conocido al Padre.","C) Que dependen enteramente de los ancianos."],"correct":"B","exp":"El texto dice de los niños espirituales en el v. 13: 'Os escribo a vosotros, hijitos, porque habéis conocido al Padre'."},
+  {"id":17,"q":"¿Cuál es la orden tajante que abre el bloque del versículo 15?","o":["A) No améis al mundo, ni las cosas que están en el mundo.","B) Apartaos de los gentiles de la provincia.","C) Destruid los templos de los ídolos falsos."],"correct":"A","exp":"El versículo 15 comienza con un imperativo directo: 'No améis al mundo, ni las cosas que están en el mundo'."},
+  {"id":18,"q":"Según el versículo 15, si alguno ama al mundo, ¿qué realidad se evidencia en él?","o":["A) Que necesita una doble porción de fe.","B) El amor del Padre no está en él.","C) Que es un creyente con gustos seculares."],"correct":"B","exp":"La Escritura establece una exclusión mutua en el v. 15: 'Si alguno ama al mundo, el amor del Padre no está en él'."},
+  {"id":19,"q":"Cuáles son las tres cosas que están en el mundo según la descripción exacta del versículo 16?","o":["A) La idolatría, la rebelión y la hechicería.","B) Los deseos de la carne, los deseos de los ojos, y la vanagloria de la vida.","C) Las riquezas, los imperios políticos y las guerras."],"correct":"B","exp":"El versículo 16 enumera de forma precisa: 'Porque todo lo que hay en el mundo, los deseos de la carne, los deseos de los ojos, y la vanagloria de la vida, no proviene del Padre, sino del mundo'."},
+  {"id":20,"q":"De acuerdo con el versículo 17, ¿qué pasa con el mundo y sus deseos, en contraste con el que hace la voluntad de Dios?","o":["A) El mundo y sus deseos pasan; pero el que hace la voluntad de Dios permanece para siempre.","B) Ambos permanecen hasta el fin de los tiempos.","C) El mundo se transforma en un lugar santo poco a poco."],"correct":"A","exp":"El versículo 17 muestra el contraste de duración: 'Y el mundo pasa, y sus deseos; pero el que hace la voluntad de Dios permanece para siempre'."},
+  {"id":21,"q":"Según el versículo 19, ¿qué demostró el hecho de que ciertos individuos salieran de la comunidad?","o":["A) Que necesitaban abrir nuevas congregaciones.","B) Salieron de nosotros, pero no eran de nosotros; porque si hubiesen sido de nosotros, habrían permanecido.","C) Que los apóstoles les dieron cartas de recomendación para viajar."],"correct":"B","exp":"El versículo 19 aclara la naturaleza de los disidentes: 'Salieron de nosotros, pero no eran de nosotros; porque si hubiesen sido de nosotros, habrían permanecido con nosotros'."},
+  {"id":22,"q":"De acuerdo con lo expresado en el versículo 20, ¿qué han recibido los creyentes de parte del Santo y qué efecto produce?","o":["A) Una señal externa y milagrosa.","B) Vosotros tenéis la unción del Santo, y conocéis todas las cosas.","C) Una serie de normas e instrucciones ocultas."],"correct":"B","exp":"El texto del versículo 20 afirma: 'Pero vosotros tenéis la unción del Santo, y conocéis todas las cosas'."},
+  {"id":23,"q":"Según el versículo 22, ¿quién es definido textualmente como el mentiroso?","o":["A) El que altera las fechas de las fiestas.","B) El que niega que Jesús es el Cristo.","C) El que no diezma sus bienes."],"correct":"B","exp":"El versículo 22 declara explícitamente: '¿Quién es el mentiroso, sino el que niega que Jesús es el Cristo? Este es anticristo, el que niega al Padre y al Hijo'."},
+  {"id":24,"q":"En el versículo 23, ¿cuál es la consecuencia absoluta para todo aquel que niega al Hijo?","o":["A) Tampoco tiene al Padre.","B) Debe ser instruido nuevamente durante un año.","C) Pierde su posición social en el pueblo."],"correct":"A","exp":"El versículo 23 muestra la unión inseparable entre ambos: 'Todo aquel que niega al Hijo, tampoco tiene al Padre. El que confiesa al Hijo, tiene también al Padre'."},
+  {"id":25,"q":"De acuerdo con el versículo 27, ¿cuál es la instrucción sobre la unción que recibisteis de él?","o":["A) Que se debe renovar mediante ceremonias continuas.","B) La unción que vosotros recibisteis de él permanece en vosotros, y no tenéis necesidad de que nadie os enseñe.","C) Que se retira cada vez que pasáis por un desánimo."],"correct":"B","exp":"El texto del versículo 27 provee seguridad absoluta: 'Pero la unción que vosotros recibisteis de él permanece en vosotros, y no tenéis necesidad de que nadie os enseñe; así como la unción misma os enseña todas las cosas...'."}
 ];
 
-// Parse questions: convert option strings to {key, text} and correct letter to index
 const QUESTIONS = RAW_QUESTIONS.map(q => ({
   ...q,
   choices: q.o.map(opt => ({ key: opt[0], text: opt.substring(3).trim() })),
@@ -190,27 +364,27 @@ const QUESTIONS = RAW_QUESTIONS.map(q => ({
 //  CONSTANTS
 // ═══════════════════════════════════════════════════════════════
 const TIMER_SECONDS = 20;
-const CIRCUMFERENCE = 264; // 2 × π × 42 ≈ 263.9
+const CIRCUMFERENCE = 264;
 const COLORS = { A: '#7C3AED', B: '#059669' };
-const ACCENTS = { A: { border: 'border-violet-500', bg: 'bg-violet-50', text: 'text-violet-700', ring: '#7C3AED' }, B: { border: 'border-emerald-500', bg: 'bg-emerald-50', text: 'text-emerald-700', ring: '#059669' } };
-const SHADOWS = ['shadow-lg', 'shadow-xl', 'shadow-2xl'];
+const SHADOWS = ['shadow-lg','shadow-xl','shadow-2xl'];
 
 // ═══════════════════════════════════════════════════════════════
 //  STATE
 // ═══════════════════════════════════════════════════════════════
 const state = {
-  slots: [],              // [{ slotId, question, isSolved }]
+  teamAName: 'Equipo A',
+  teamBName: 'Equipo B',
+  slots: [],
   scores: { A: 0, B: 0 },
   currentTeam: 'A',
   currentSlotId: null,
   currentQuestion: null,
   currentBet: 0,
-  phase: 'idle',          // idle | betting | answering | revealed | result
+  modalPhase: null, // null | betting | answering | result | review | sudden-death | winner
   timer: TIMER_SECONDS,
   timerInterval: null,
   isRevealed: false,
   gameOver: false,
-  isSuddenDeath: false,
   answeredCount: 0
 };
 
@@ -219,28 +393,34 @@ const state = {
 // ═══════════════════════════════════════════════════════════════
 const $ = id => document.getElementById(id);
 const dom = {
-  board: $('board'),
+  screenWelcome: $('screen-welcome'),
+  screenBoard: $('screen-board'),
+  grid: $('slot-grid'),
   modal: $('modal'),
   modalBody: $('modal-body'),
+  backdrop: $('modal-backdrop'),
   scoreA: $('score-a'),
   scoreB: $('score-b'),
   teamA: $('team-a-name'),
   teamB: $('team-b-name'),
   panelA: $('panel-a'),
   panelB: $('panel-b'),
-  indA: $('team-a-indicator'),
-  indB: $('team-b-indicator'),
+  dotA: $('dot-a'),
+  dotB: $('dot-b'),
   turnBadge: $('turn-badge'),
   progress: $('progress-chip'),
-  suddenDeathArea: $('sudden-death-area'),
-  btnDesempate: $('btn-desempate'),
   btnReset: $('btn-reset'),
-  backdrop: $('modal-backdrop')
+  btnStart: $('btn-start'),
+  inputA: $('input-team-a'),
+  inputB: $('input-team-b'),
+  suddenDeathArea: $('sudden-death-area'),
+  btnDesempate: $('btn-desempate')
 };
 
 // ═══════════════════════════════════════════════════════════════
 //  UTILITIES
 // ═══════════════════════════════════════════════════════════════
+function getTeamName(t) { return t === 'A' ? state.teamAName : state.teamBName; }
 function shuffle(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -249,46 +429,51 @@ function shuffle(arr) {
   }
   return a;
 }
-
-function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
-
 function getAudioCtx() {
   if (!window._aCtx) window._aCtx = new (window.AudioContext || window.webkitAudioContext)();
   if (window._aCtx.state === 'suspended') window._aCtx.resume();
   return window._aCtx;
 }
-
 function playSound(type) {
   try {
     const ctx = getAudioCtx();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
+    const osc = ctx.createOscillator(), gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
     if (type === 'correct') {
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(600, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
-      gain.gain.setValueAtTime(0, ctx.currentTime);
-      gain.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 0.05);
-      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-      osc.start(ctx.currentTime);
-      osc.stop(ctx.currentTime + 0.5);
+      osc.type = 'sine'; osc.frequency.setValueAtTime(600,ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(1200,ctx.currentTime+.1);
+      gain.gain.setValueAtTime(0,ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(.5,ctx.currentTime+.05);
+      gain.gain.exponentialRampToValueAtTime(.01,ctx.currentTime+.5);
+      osc.start(ctx.currentTime); osc.stop(ctx.currentTime+.5);
     } else {
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(150, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(90, ctx.currentTime + 0.3);
-      gain.gain.setValueAtTime(0, ctx.currentTime);
-      gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.05);
-      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
-      osc.start(ctx.currentTime);
-      osc.stop(ctx.currentTime + 0.4);
+      osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150,ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(90,ctx.currentTime+.3);
+      gain.gain.setValueAtTime(0,ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(.3,ctx.currentTime+.05);
+      gain.gain.exponentialRampToValueAtTime(.01,ctx.currentTime+.4);
+      osc.start(ctx.currentTime); osc.stop(ctx.currentTime+.4);
     }
-  } catch(e) { /* silent */ }
+  } catch(e) {}
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  SCOREBOARD
+//  WELCOME
+// ═══════════════════════════════════════════════════════════════
+function goToBoard() {
+  const na = dom.inputA.value.trim() || 'Equipo A';
+  const nb = dom.inputB.value.trim() || 'Equipo B';
+  state.teamAName = na;
+  state.teamBName = nb;
+  dom.teamA.textContent = na;
+  dom.teamB.textContent = nb;
+  dom.screenWelcome.classList.add('hidden');
+  dom.screenBoard.classList.remove('hidden');
+  initGame();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SCORES
 // ═══════════════════════════════════════════════════════════════
 function renderScores() {
   dom.scoreA.textContent = state.scores.A;
@@ -296,7 +481,7 @@ function renderScores() {
 }
 
 function addScore(team, delta) {
-  state.scores[team] = clamp(state.scores[team] + delta, 0, 9999);
+  state.scores[team] += delta;
   renderScores();
   const el = team === 'A' ? dom.scoreA : dom.scoreB;
   el.classList.remove('score-pop');
@@ -304,26 +489,38 @@ function addScore(team, delta) {
   el.classList.add('score-pop');
 }
 
+function recalculateScores() {
+  const s = { A: 0, B: 0 };
+  state.slots.forEach(slot => {
+    if (slot.isSolved && slot.currentTeam) s[slot.currentTeam] += slot.earnedPoints;
+  });
+  state.scores = s;
+  renderScores();
+}
+
 function updateTurnUI() {
-  const t = state.currentTeam;
-  const isA = t === 'A';
-  dom.panelA.className = `team-turn flex-1 flex flex-wrap items-center gap-1.5 sm:gap-2 p-2.5 sm:p-3 rounded-2xl transition-all duration-300 border-2 ${isA ? 'border-violet-300 bg-violet-50/70' : 'border-transparent bg-white/60'}`;
-  dom.panelB.className = `team-turn flex-1 flex flex-wrap items-center gap-1.5 sm:gap-2 p-2.5 sm:p-3 rounded-2xl transition-all duration-300 border-2 ${!isA ? 'border-emerald-300 bg-emerald-50/70' : 'border-transparent bg-white/60'}`;
-  dom.indA.style.display = isA ? 'block' : 'none';
-  dom.indB.style.display = !isA ? 'block' : 'none';
-  dom.turnBadge.textContent = `Turno ${t}`;
-  dom.turnBadge.className = `text-[0.55rem] font-black uppercase tracking-wider px-2 py-1 rounded-full ${isA ? 'bg-violet-100 text-violet-700' : 'bg-emerald-100 text-emerald-700'}`;
+  const t = state.currentTeam, isA = t === 'A';
+  dom.panelA.className = `team-panel ${isA ? 'active-a' : 'inactive'}`;
+  dom.panelB.className = `team-panel ${!isA ? 'active-b' : 'inactive'}`;
+  dom.dotA.style.display = isA ? 'block' : 'none';
+  dom.dotB.style.display = !isA ? 'block' : 'none';
+  dom.turnBadge.textContent = `TURNO ${t}`;
+  dom.turnBadge.style.cssText = `background:${isA ? 'var(--violet-bg)' : 'var(--emerald-bg)'};color:${isA ? 'var(--violet)' : 'var(--emerald)'}`;
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  SLOT SYSTEM (Deterministic Architecture)
+//  SLOTS
 // ═══════════════════════════════════════════════════════════════
 function buildSlots() {
   const shuffled = shuffle(QUESTIONS);
   state.slots = Array.from({ length: 25 }, (_, i) => ({
     slotId: i + 1,
     question: shuffled[i],
-    isSolved: false
+    isSolved: false,
+    selectedAnswer: null,
+    earnedPoints: 0,
+    currentTeam: null,
+    pointsValue: 100
   }));
 }
 
@@ -332,34 +529,30 @@ function renderBoard() {
   state.answeredCount = solved;
   dom.progress.textContent = `${solved} / 25 respondidas`;
 
-  dom.board.innerHTML = state.slots.map(slot => {
-    const shadows = SHADOWS;
-    const shadowIdx = (slot.slotId - 1) % 3;
-    const floatDur = (2.5 + (slot.slotId % 5) * 0.3).toFixed(1);
-    const floatDelay = ((slot.slotId * 0.17) % 3).toFixed(2);
+  dom.grid.innerHTML = state.slots.map(slot => {
     const isSolved = slot.isSolved;
-    return `<button
-      data-slot-id="${slot.slotId}"
-      class="slot-card flex flex-col items-center justify-center aspect-square text-center p-2 ${isSolved ? 'solved' : shadows[shadowIdx] + ' hover:' + (slot.slotId % 2 === 0 ? 'shadow-2xl' : 'shadow-xl')}"
-      style="${isSolved ? '' : `--float-dur:${floatDur}s;--float-delay:${floatDelay}s;--hover-color:${slot.slotId % 2 === 0 ? '#7C3AED' : '#059669'}`}"
-      onclick="handleSlotClick(${slot.slotId})"
-      ${isSolved ? 'disabled' : ''}>
-      <span class="text-xl sm:text-2xl font-black text-gray-800 leading-none ${isSolved ? 'text-gray-300' : ''}">${slot.slotId}</span>
-      ${isSolved ? '<span class="text-[0.5rem] mt-0.5 text-gray-300 font-bold">✓</span>' : '<span class="text-[0.5rem] mt-0.5 text-gray-300 font-semibold">●</span>'}
+    const floatDur = (2.5 + (slot.slotId % 5) * .3).toFixed(1);
+    const floatDelay = ((slot.slotId * .17) % 3).toFixed(2);
+    const shadowIdx = (slot.slotId - 1) % 3;
+    return `<button class="slot-card${isSolved?' solved':''}" data-slot-id="${slot.slotId}"
+      style="${isSolved?'':`--float-dur:${floatDur}s;--float-delay:${floatDelay}s;--hover-color:${slot.slotId%2===0?'#7C3AED':'#059669'};box-shadow:${shadowIdx===0?'0 8px 24px -8px rgba(0,0,0,.08)':shadowIdx===1?'0 12px 32px -10px rgba(0,0,0,.1)':'0 20px 48px -12px rgba(0,0,0,.12)'}`}"
+      onclick="handleSlotClick(${slot.slotId})">
+      <span class="slot-num">${slot.slotId}</span>
+      <span class="slot-icon">${isSolved ? '👁️' : '●'}</span>
     </button>`;
   }).join('');
 
-  checkSuddenDeath();
+  checkGameEnd();
 }
 
 // ═══════════════════════════════════════════════════════════════
 //  GAME FLOW
 // ═══════════════════════════════════════════════════════════════
 function handleSlotClick(slotId) {
-  if (state.gameOver) return;
   const slot = state.slots.find(s => s.slotId === slotId);
-  if (!slot || slot.isSolved) return;
-
+  if (!slot) return;
+  if (slot.isSolved) { showReviewModal(slot); return; }
+  if (state.gameOver) return;
   state.currentSlotId = slotId;
   state.currentQuestion = slot.question;
   state.isRevealed = false;
@@ -367,129 +560,101 @@ function handleSlotClick(slotId) {
   showBettingScreen();
 }
 
-// ─── PHASE 1: BETTING ──────────────────────────────────────────
+// ─── BETTING ──────────────────────────────────
 function showBettingScreen() {
-  state.phase = 'betting';
+  state.modalPhase = 'betting';
   const t = state.currentTeam;
-  const accent = ACCENTS[t];
   dom.modalBody.innerHTML = `
-    <div class="text-center mb-6">
-      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full ${accent.bg} ${accent.text} text-xs font-black uppercase tracking-wider mb-3">
-        Turno de ${t === 'A' ? dom.teamA.textContent : dom.teamB.textContent}
-      </div>
-      <h2 class="text-2xl font-black text-gray-900">Elige tu apuesta</h2>
-      <p class="text-sm text-gray-400 font-semibold mt-1">¿Cuánto riesgo estás dispuesto a tomar?</p>
+    <div class="bet-header">
+      <div class="bet-turn-badge ${t.toLowerCase()}">Turno de ${getTeamName(t)}</div>
+      <div class="bet-title">¿Cuántos puntos desean colocar en juego?</div>
+      <div class="bet-subtitle">Elige el riesgo para esta pregunta</div>
     </div>
-    <div class="flex gap-3 sm:gap-4">
-      <div class="bet-card" onclick="selectBet(100)" style="border-color:#7C3AED20">
-        <div class="text-3xl mb-2">🛡️</div>
-        <div class="text-lg font-black text-gray-900">Estándar</div>
-        <div class="text-sm font-bold text-gray-400 mt-1">+100 pts</div>
-        <div class="text-xs font-semibold text-gray-300 mt-2">Seguro y estable</div>
+    <div class="bet-cards">
+      <div class="bet-card" onclick="selectBet(100)" style="border-color:${t==='A'?'rgba(124,58,237,.15)':'rgba(5,150,105,.15)'}">
+        <div class="bet-card-emoji">🛡️</div>
+        <div class="bet-card-title">Estándar</div>
+        <div class="bet-card-pts">+100 / −100 pts</div>
+        <div class="bet-card-desc">Seguro y estable</div>
       </div>
-      <div class="bet-card" onclick="selectBet(200)" style="border-color:#05966920">
-        <div class="text-3xl mb-2">⚡</div>
-        <div class="text-lg font-black text-gray-900">Doble o Nada</div>
-        <div class="text-sm font-bold text-gray-400 mt-1">+200 pts</div>
-        <div class="text-xs font-semibold text-gray-300 mt-2">Alto riesgo, alta recompensa</div>
+      <div class="bet-card" onclick="selectBet(200)" style="border-color:${t==='A'?'rgba(124,58,237,.15)':'rgba(5,150,105,.15)'}">
+        <div class="bet-card-emoji">⚡</div>
+        <div class="bet-card-title">Doble o Nada</div>
+        <div class="bet-card-pts">+200 / −200 pts</div>
+        <div class="bet-card-desc">Alto riesgo</div>
       </div>
     </div>
-    <div class="mt-6 text-center">
-      <button class="text-xs font-bold text-gray-400 hover:text-gray-600 transition-colors" onclick="closeModal()">Cancelar</button>
-    </div>
-  `;
+    <button class="bet-cancel" onclick="closeModal()">Cancelar</button>`;
   showModal();
 }
 
-// ─── PHASE 2: QUESTION (options hidden, timer hidden) ───────────
 function selectBet(amount) {
   state.currentBet = amount;
-  state.phase = 'answering';
+  state.modalPhase = 'answering';
   state.isRevealed = false;
   stopTimer();
   state.timer = TIMER_SECONDS;
-
   const q = state.currentQuestion;
   const t = state.currentTeam;
-  const accent = ACCENTS[t];
-
   dom.modalBody.innerHTML = `
-    <div class="text-center mb-5">
-      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full ${accent.bg} ${accent.text} text-xs font-black uppercase tracking-wider mb-3">
-        Apuesta: ${amount === 100 ? 'Estándar (100 pts)' : '¡Doble o Nada! (200 pts)'}
-      </div>
-      <p class="text-base sm:text-lg font-bold text-gray-800 leading-relaxed">${q.q}</p>
+    <div class="q-section">
+      <div class="q-badge ${t.toLowerCase()}">${getTeamName(t)} · ${amount === 100 ? 'Estándar' : '¡Doble o Nada!'}</div>
+      <div class="q-text">${q.q}</div>
     </div>
-    <div class="flex flex-col items-center gap-4">
-      <button id="btn-reveal" class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-black text-sm text-white bg-gradient-to-r from-violet-600 to-violet-500 shadow-lg shadow-violet-200 hover:shadow-xl hover:shadow-violet-200 hover:from-violet-500 hover:to-violet-400 transition-all duration-200 active:scale-95" onclick="revealOptions()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    <div class="q-reveal-area">
+      <button class="btn-reveal" id="btn-reveal" onclick="revealOptions()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         Revelar Opciones
       </button>
-      <p class="text-xs font-semibold text-gray-400">Lee la pregunta en voz alta antes de revelar</p>
+      <p style="font-size:.7rem;font-weight:600;color:var(--gray-400)">Lee la pregunta en voz alta antes de revelar</p>
     </div>
-    <!-- Timer (hidden, will appear on reveal) -->
-    <div id="timer-area" class="hidden flex flex-col items-center mt-4">
-      <div class="relative w-20 h-20">
-        <svg viewBox="0 0 94 94" class="absolute inset-0 transform -rotate-90">
-          <circle class="timer-ring" cx="47" cy="47" r="42" stroke="#e5e7eb"/>
-          <circle id="timer-ring-prog" class="timer-ring" cx="47" cy="47" r="42" stroke="${COLORS[t]}" stroke-dasharray="${CIRCUMFERENCE}" stroke-dashoffset="0" style="transition:stroke-dashoffset 1s linear"/>
+    <div id="timer-area" class="timer-area hidden">
+      <div class="timer-ring-wrap">
+        <svg class="timer-svg" viewBox="0 0 84 84">
+          <circle class="timer-ring-bg" cx="42" cy="42" r="36"/>
+          <circle id="timer-ring-prog" class="timer-ring-prog" cx="42" cy="42" r="36" stroke="${COLORS[t]}" stroke-dasharray="${CIRCUMFERENCE}" stroke-dashoffset="0"/>
         </svg>
-        <span id="timer-text" class="absolute inset-0 flex items-center justify-center text-2xl font-black text-gray-800">${TIMER_SECONDS}</span>
+        <span id="timer-text" class="timer-text">${TIMER_SECONDS}</span>
       </div>
     </div>
-    <div id="options-area" class="hidden mt-4 space-y-2.5"></div>
-  `;
+    <div id="options-area" class="options-area hidden"></div>`;
   showModal();
 }
 
-// ─── PHASE 3: TIMER START + OPTIONS REVEALED ───────────────────
 function revealOptions() {
   if (state.isRevealed) return;
   state.isRevealed = true;
-  state.phase = 'revealed';
-
+  state.modalPhase = 'revealed';
   const q = state.currentQuestion;
   const t = state.currentTeam;
-  const accent = ACCENTS[t];
-
-  const timerArea = document.getElementById('timer-area');
-  const optionsArea = document.getElementById('options-area');
-  const revealBtn = document.getElementById('btn-reveal');
-
-  if (revealBtn) revealBtn.style.display = 'none';
-  if (timerArea) timerArea.classList.remove('hidden');
-  if (optionsArea) {
-    optionsArea.classList.remove('hidden');
-    optionsArea.innerHTML = q.choices.map((c, i) =>
-      `<button class="btn-opt" onclick="handleAnswer(${i})">
-        <span class="opt-letter" style="color:${COLORS[t]}">${c.key})</span> ${c.text}
-      </button>`
+  const ta = document.getElementById('timer-area');
+  const oa = document.getElementById('options-area');
+  const rb = document.getElementById('btn-reveal');
+  if (rb) rb.style.display = 'none';
+  if (ta) ta.classList.remove('hidden');
+  if (oa) {
+    oa.classList.remove('hidden');
+    oa.innerHTML = q.choices.map((c,i) =>
+      `<button class="btn-opt" onclick="handleAnswer(${i})"><span class="opt-letter" style="color:${COLORS[t]}">${c.key})</span> ${c.text}</button>`
     ).join('');
   }
-
   startTimer();
 }
 
-// ─── PHASE 4: ANSWER SELECTED ──────────────────────────────────
+// ─── ANSWER ───────────────────────────────────
 function handleAnswer(idx) {
-  if (state.phase === 'result') return;
+  if (state.modalPhase === 'result') return;
   stopTimer();
-
   const q = state.currentQuestion;
   const isCorrect = idx === q.correctIdx;
-  const t = state.currentTeam;
-
+  state._lastAnswerIdx = idx;
   playSound(isCorrect ? 'correct' : 'wrong');
-
-  // Highlight options
-  document.querySelectorAll('.btn-opt').forEach((btn, i) => {
+  document.querySelectorAll('.btn-opt').forEach((btn,i) => {
     btn.disabled = true;
-    if (i === q.correctIdx) btn.classList.add('opt-correct');
-    else if (i === idx) btn.classList.add('opt-wrong');
+    if (i === q.correctIdx) btn.classList.add('correct');
+    else if (i === idx) btn.classList.add('wrong');
   });
-
-  state.phase = 'result';
-
+  state.modalPhase = 'result';
   setTimeout(() => showResult(isCorrect), 600);
 }
 
@@ -497,45 +662,38 @@ function showResult(isCorrect) {
   const q = state.currentQuestion;
   const t = state.currentTeam;
   const bet = state.currentBet;
-  const accent = ACCENTS[t];
-  const points = isCorrect ? bet : 0;
+  const points = isCorrect ? bet : -bet;
+  const accent = t === 'A' ? COLORS.A : COLORS.B;
 
-  // Update score
-  if (isCorrect) addScore(t, bet);
-
-  // Mark slot as solved
+  // Save slot state
   const slot = state.slots.find(s => s.slotId === state.currentSlotId);
-  if (slot) slot.isSolved = true;
+  if (slot) {
+    slot.isSolved = true;
+    slot.selectedAnswer = state._lastAnswerIdx !== undefined ? state._lastAnswerIdx : q.correctIdx;
+    slot.earnedPoints = points;
+    slot.currentTeam = t;
+    slot.pointsValue = bet;
+  }
+  addScore(t, points);
 
   const correctKey = q.choices[q.correctIdx].key;
   const correctText = q.choices[q.correctIdx].text;
 
   dom.modalBody.innerHTML = `
-    <div class="text-center mb-5 animate-[slideDown_0.4s_var(--ease-bounce)]">
-      <div class="inline-flex items-center justify-center w-16 h-16 rounded-full text-3xl mx-auto mb-3 ${isCorrect ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-500'}">
-        ${isCorrect ? '✓' : '✗'}
-      </div>
-      <h2 class="text-2xl font-black ${isCorrect ? 'text-emerald-700' : 'text-rose-600'}">${isCorrect ? '¡Respuesta Correcta!' : 'Respuesta Incorrecta'}</h2>
-      <p class="text-sm font-bold text-gray-400 mt-1">
-        ${t === 'A' ? dom.teamA.textContent : dom.teamB.textContent} 
-        <span class="${isCorrect ? 'text-emerald-600' : 'text-rose-500'}">${isCorrect ? '+' + points : '+0'}</span> pts
-      </p>
+    <div class="text-center" style="margin-bottom:12px;animation:slideDown .4s var(--ease-bounce)">
+      <div class="result-icon ${isCorrect ? 'correct-icon' : 'wrong-icon'}">${isCorrect ? '✓' : '✗'}</div>
+      <div class="result-title ${isCorrect ? 'correct-title' : 'wrong-title'}">${isCorrect ? '¡Respuesta Correcta!' : 'Respuesta Incorrecta'}</div>
+      <div class="result-sub">${getTeamName(t)} <span style="color:${isCorrect ? 'var(--success)' : 'var(--rose)'}">${isCorrect ? '+' + points : points} pts</span></div>
     </div>
-    <div class="bg-gray-50 rounded-2xl p-5 mb-5 border border-gray-100 animate-[fadeUp_0.5s_var(--ease-bounce)]">
-      <div class="text-xs font-black text-gray-400 uppercase tracking-wider mb-2">Respuesta correcta</div>
-      <p class="text-base font-bold text-gray-800"><span class="text-violet-600">${correctKey})</span> ${correctText}</p>
+    <div class="result-answer-box">
+      <div class="result-answer-box-label">Respuesta correcta</div>
+      <div class="result-answer-text"><span class="opt-letter" style="color:var(--violet)">${correctKey})</span> ${correctText}</div>
     </div>
-    <div class="bg-amber-50 rounded-2xl p-5 border border-amber-100 animate-[fadeUp_0.6s_var(--ease-bounce)]" style="animation-delay:0.1s">
-      <div class="flex items-center gap-2 mb-2">
-        <span class="text-lg">📖</span>
-        <span class="text-xs font-black text-amber-700 uppercase tracking-wider">Explicación</span>
-      </div>
-      <p class="text-sm font-semibold text-amber-900 leading-relaxed">${q.exp}</p>
+    <div class="explanation-box">
+      <div class="explanation-box-label"><span>📖</span> Explicación</div>
+      <p>${q.exp}</p>
     </div>
-    <button class="mt-6 w-full py-4 rounded-2xl font-black text-sm text-white hover:opacity-90 transition-all duration-200 active:scale-95 shadow-lg" style="background:${COLORS[t]}" onclick="continueGame()">
-      Continuar →
-    </button>
-  `;
+    <button class="btn-continue" style="background:${accent}" onclick="continueGame()">Continuar →</button>`;
   showModal();
 }
 
@@ -545,13 +703,76 @@ function continueGame() {
   state.currentQuestion = null;
   state.currentBet = 0;
   state.isRevealed = false;
-
-  // Switch team
+  state.modalPhase = null;
   state.currentTeam = state.currentTeam === 'A' ? 'B' : 'A';
   updateTurnUI();
   renderBoard();
   renderScores();
-  state.phase = 'idle';
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  REVIEW & EDIT
+// ═══════════════════════════════════════════════════════════════
+function showReviewModal(slot) {
+  state.modalPhase = 'review';
+  const q = slot.question;
+  const isCorrect = slot.selectedAnswer === q.correctIdx;
+  const teamName = getTeamName(slot.currentTeam);
+  const ptsLabel = slot.earnedPoints >= 0 ? '+' + slot.earnedPoints : slot.earnedPoints;
+
+  let answersHtml = q.choices.map((c,i) => {
+    let cls = 'review-answer';
+    if (i === q.correctIdx) cls += ' correct-answer';
+    if (i === slot.selectedAnswer && i === q.correctIdx) cls += ' selected-correct';
+    else if (i === slot.selectedAnswer) cls += ' selected-wrong';
+    return `<div class="${cls}">${i === q.correctIdx ? '✅' : (i === slot.selectedAnswer ? '❌' : '')} <span class="opt-letter">${c.key})</span> ${c.text}</div>`;
+  }).join('');
+
+  let changeHtml = q.choices.map((c,i) => {
+    let cls = 'review-opt';
+    if (i === slot.selectedAnswer) cls += ' current-sel';
+    if (i === q.correctIdx) cls += ' mark-correct';
+    return `<button class="${cls}" onclick="changeAnswer(${slot.slotId}, ${i})"><span class="opt-letter">${c.key})</span> ${c.text}</button>`;
+  }).join('');
+
+  dom.modalBody.innerHTML = `
+    <div class="review-header">
+      <span class="review-icon">🔍</span>
+      <h2>Revisión de Respuesta</h2>
+      <span class="review-slot-badge">Slot ${slot.slotId}</span>
+    </div>
+    <div class="review-q-text">${q.q}</div>
+    <div class="review-answers">${answersHtml}</div>
+    <div class="review-answer-pts">${ptsLabel} pts · ${teamName} · ${slot.pointsValue === 100 ? 'Estándar' : 'Doble o Nada'}</div>
+    <div class="explanation-box" style="margin-bottom:12px">
+      <div class="explanation-box-label"><span>📖</span> Explicación</div>
+      <p>${q.exp}</p>
+    </div>
+    <div class="review-change-section">
+      <div class="review-change-title">Cambiar respuesta:</div>
+      <div class="review-options">${changeHtml}</div>
+    </div>
+    <button class="btn-close-modal" onclick="closeModal()">Cerrar</button>`;
+  showModal();
+}
+
+function changeAnswer(slotId, newIdx) {
+  const slot = state.slots.find(s => s.slotId === slotId);
+  if (!slot || !slot.isSolved) return;
+  if (slot.selectedAnswer === newIdx) { closeModal(); return; }
+
+  const q = slot.question;
+  const wasCorrect = slot.selectedAnswer === q.correctIdx;
+  const nowCorrect = newIdx === q.correctIdx;
+
+  // Update slot
+  slot.selectedAnswer = newIdx;
+  slot.earnedPoints = nowCorrect ? slot.pointsValue : -slot.pointsValue;
+
+  playSound(nowCorrect ? 'correct' : 'wrong');
+  recalculateScores();
+  renderBoard();
+  showReviewModal(slot);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -561,7 +782,6 @@ function startTimer() {
   stopTimer();
   state.timer = TIMER_SECONDS;
   updateTimerUI(TIMER_SECONDS);
-
   state.timerInterval = setInterval(() => {
     state.timer--;
     updateTimerUI(state.timer);
@@ -571,44 +791,34 @@ function startTimer() {
       if (ring) ring.style.stroke = '#ef4444';
       if (txt) txt.style.color = '#ef4444';
     }
-    if (state.timer <= 0) {
-      stopTimer();
-      handleTimeout();
-    }
+    if (state.timer <= 0) { stopTimer(); handleTimeout(); }
   }, 1000);
 }
 
-function stopTimer() {
-  if (state.timerInterval) {
-    clearInterval(state.timerInterval);
-    state.timerInterval = null;
-  }
-}
+function stopTimer() { if (state.timerInterval) { clearInterval(state.timerInterval); state.timerInterval = null; } }
 
-function updateTimerUI(seconds) {
+function updateTimerUI(s) {
   const ring = document.getElementById('timer-ring-prog');
   const txt = document.getElementById('timer-text');
-  if (ring) ring.style.strokeDashoffset = CIRCUMFERENCE - (seconds / TIMER_SECONDS) * CIRCUMFERENCE;
-  if (txt) txt.textContent = seconds;
+  if (ring) ring.style.strokeDashoffset = CIRCUMFERENCE - (s / TIMER_SECONDS) * CIRCUMFERENCE;
+  if (txt) txt.textContent = s;
 }
 
 function handleTimeout() {
-  if (state.phase === 'result') return;
-  // Treat as wrong answer
-  document.querySelectorAll('.btn-opt').forEach(btn => btn.disabled = true);
+  if (state.modalPhase === 'result') return;
+  document.querySelectorAll('.btn-opt').forEach(b => b.disabled = true);
   showResult(false);
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  SUDDEN DEATH
+//  SUDDEN DEATH & WINNER
 // ═══════════════════════════════════════════════════════════════
-function checkSuddenDeath() {
+function checkGameEnd() {
   const solved = state.slots.filter(s => s.isSolved).length;
   const tie = state.scores.A === state.scores.B;
   if (solved === 25 && tie && !state.gameOver) {
     state.gameOver = true;
     dom.suddenDeathArea.classList.remove('hidden');
-    dom.suddenDeathArea.querySelector('#btn-desempate').classList.add('animate-[pulseGold_2s_ease-in-out_infinite]');
   } else if (solved === 25 && !tie) {
     showWinner();
   } else {
@@ -616,181 +826,128 @@ function checkSuddenDeath() {
   }
 }
 
+function showWinner() {
+  state.gameOver = true;
+  const winner = state.scores.A > state.scores.B ? 'A' : 'B';
+  const name = getTeamName(winner);
+  const score = state.scores[winner];
+  dom.modalBody.innerHTML = `
+    <div class="text-center" style="animation:slideDown .4s var(--ease-bounce)">
+      <div class="winner-icon">🏆</div>
+      <div class="winner-name">¡${name} Campeón!</div>
+      <p style="font-size:.9rem;font-weight:700;color:var(--gray-400);margin-top:4px">Puntaje final: ${score} pts</p>
+    </div>
+    <div style="background:var(--gray-50);border-radius:1.2rem;padding:16px;margin:20px 0;border:1px solid var(--gray-100);text-align:center">
+      <p style="font-size:.85rem;font-weight:600;color:var(--gray-500)">¡Gracias por estudiar 1 Juan 2!</p>
+    </div>
+    <button class="btn-continue" style="background:linear-gradient(135deg,var(--violet),#6D28D9)" onclick="resetGame()">↺ Jugar de Nuevo</button>`;
+  showModal();
+}
+
 function startSuddenDeath() {
   const q = shuffle(QUESTIONS)[0];
-  const t = state.currentTeam;
-  const accent = ACCENTS[t];
-
   dom.modalBody.innerHTML = `
-    <div class="text-center mb-5 animate-[slideDown_0.4s_var(--ease-bounce)]">
-      <div class="text-5xl mb-3">🏆</div>
-      <h2 class="text-2xl font-black text-amber-700">¡Muerte Súbita!</h2>
-      <p class="text-sm font-bold text-amber-600 mt-1">Los equipos están empatados. Esta pregunta decide al ganador.</p>
+    <div class="sd-container">
+      <div class="sd-icon">🏆</div>
+      <div class="sd-title">¡Muerte Súbita!</div>
+      <div class="sd-sub">Los equipos están empatados. Esta pregunta decide al ganador.</div>
     </div>
-    <div class="bg-gray-50 rounded-2xl p-5 mb-5 border border-gray-100">
-      <p class="text-base font-bold text-gray-800 leading-relaxed">${q.q}</p>
-    </div>
-    <div class="space-y-2.5 mb-6">
-      ${q.choices.map((c, i) =>
-        `<button class="btn-opt" onclick="handleSuddenDeathAnswer(${i}, ${q.correctIdx}, '${q.exp.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')">
-          <span class="opt-letter text-amber-600">${c.key})</span> ${c.text}
+    <div class="sd-q-box"><div class="sd-q-text">${q.q}</div></div>
+    <div class="sd-options">
+      ${q.choices.map((c,i) =>
+        `<button class="btn-opt" onclick="handleSdAnswer(${i},${q.correctIdx},'${q.exp.replace(/'/g,"\\'").replace(/"/g,'&quot;')}')">
+          <span class="opt-letter" style="color:var(--amber)">${c.key})</span> ${c.text}
         </button>`
       ).join('')}
-    </div>
-  `;
-  closeModal();
+    </div>`;
   dom.suddenDeathArea.classList.add('hidden');
-  // Store the SD question
-  state._sdQuestion = q;
-  state._sdTeam = null;
+  state._sdQ = q;
+  closeModal();
   showModal();
 }
 
-function handleSuddenDeathAnswer(idx, correctIdx, exp) {
+function handleSdAnswer(idx, correctIdx, exp) {
   stopTimer();
-  const q = state._sdQuestion;
+  const q = state._sdQ;
   const isCorrect = idx === correctIdx;
-
-  document.querySelectorAll('.btn-opt').forEach((btn, i) => {
+  document.querySelectorAll('.sd-options .btn-opt').forEach((btn,i) => {
     btn.disabled = true;
-    if (i === correctIdx) btn.classList.add('opt-correct');
-    else if (i === idx) btn.classList.add('opt-wrong');
+    if (i === correctIdx) btn.classList.add('correct');
+    else if (i === idx) btn.classList.add('wrong');
   });
-
   setTimeout(() => {
     const winnerTeam = isCorrect ? state.currentTeam : (state.currentTeam === 'A' ? 'B' : 'A');
-    const winnerName = winnerTeam === 'A' ? dom.teamA.textContent : dom.teamB.textContent;
-    const loserName = winnerTeam === 'A' ? dom.teamB.textContent : dom.teamA.textContent;
+    const name = getTeamName(winnerTeam);
     const correctKey = q.choices[correctIdx].key;
     const correctText = q.choices[correctIdx].text;
-
     dom.modalBody.innerHTML = `
-      <div class="text-center mb-5 animate-[slideDown_0.4s_var(--ease-bounce)]">
-        <div class="text-6xl mb-3">🏆</div>
-        <h2 class="text-3xl font-black text-amber-700">¡${winnerName} Gana!</h2>
-        <p class="text-sm font-bold text-gray-400 mt-1">${isCorrect ? 'Respuesta correcta' : 'Respuesta incorrecta — ' + loserName + ' gana por defecto'}</p>
+      <div class="text-center" style="animation:slideDown .4s var(--ease-bounce)">
+        <div class="winner-icon">🏆</div>
+        <div class="winner-name">¡${name} Gana!</div>
+        <p style="font-size:.8rem;font-weight:700;color:var(--gray-400);margin-top:4px">${isCorrect ? 'Respuesta correcta' : 'Respuesta incorrecta'}</p>
       </div>
-      <div class="bg-gray-50 rounded-2xl p-5 mb-4 border border-gray-100">
-        <div class="text-xs font-black text-gray-400 uppercase tracking-wider mb-2">Respuesta correcta</div>
-        <p class="text-base font-bold text-gray-800"><span class="text-violet-600">${correctKey})</span> ${correctText}</p>
+      <div class="result-answer-box">
+        <div class="result-answer-box-label">Respuesta correcta</div>
+        <div class="result-answer-text"><span class="opt-letter" style="color:var(--violet)">${correctKey})</span> ${correctText}</div>
       </div>
-      <div class="bg-amber-50 rounded-2xl p-5 border border-amber-100">
-        <div class="flex items-center gap-2 mb-2">
-          <span class="text-lg">📖</span>
-          <span class="text-xs font-black text-amber-700 uppercase tracking-wider">Explicación</span>
-        </div>
-        <p class="text-sm font-semibold text-amber-900 leading-relaxed">${exp}</p>
+      <div class="explanation-box">
+        <div class="explanation-box-label"><span>📖</span> Explicación</div>
+        <p>${exp}</p>
       </div>
-      <button class="mt-6 w-full py-4 rounded-2xl font-black text-sm text-white bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 transition-all duration-200 active:scale-95 shadow-lg shadow-amber-200" onclick="resetGame()">
-        ↺ Jugar de Nuevo
-      </button>
-    `;
-    showModal();
+      <button class="btn-continue" style="background:linear-gradient(135deg,var(--amber),#d97706)" onclick="resetGame()">↺ Jugar de Nuevo</button>`;
     state.gameOver = true;
+    showModal();
   }, 600);
-}
-
-function showWinner() {
-  const winner = state.scores.A > state.scores.B ? 'A' : 'B';
-  const winnerName = winner === 'A' ? dom.teamA.textContent : dom.teamB.textContent;
-  const score = state.scores[winner];
-
-  dom.modalBody.innerHTML = `
-    <div class="text-center mb-5 animate-[slideDown_0.4s_var(--ease-bounce)]">
-      <div class="text-6xl mb-3">🏆</div>
-      <h2 class="text-3xl font-black text-gray-900">¡${winnerName} Campeón!</h2>
-      <p class="text-sm font-bold text-gray-400 mt-1">Puntaje final: ${score} pts</p>
-    </div>
-    <div class="bg-gray-50 rounded-2xl p-5 mb-5 border border-gray-100 text-center">
-      <p class="text-sm font-semibold text-gray-600">¡Gracias por estudiar 1 Juan 2!</p>
-    </div>
-    <button class="w-full py-4 rounded-2xl font-black text-sm text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 transition-all duration-200 active:scale-95 shadow-lg shadow-violet-200" onclick="resetGame()">
-      ↺ Jugar de Nuevo
-    </button>
-  `;
-  state.gameOver = true;
-  showModal();
 }
 
 // ═══════════════════════════════════════════════════════════════
 //  MODAL
 // ═══════════════════════════════════════════════════════════════
-function showModal() {
-  dom.modal.classList.remove('hidden');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeModal() {
-  dom.modal.classList.add('hidden');
-  document.body.style.overflow = '';
-}
+function showModal() { dom.modal.classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+function closeModal() { dom.modal.classList.add('hidden'); document.body.style.overflow = ''; }
 
 // ═══════════════════════════════════════════════════════════════
 //  RESET
 // ═══════════════════════════════════════════════════════════════
 function resetGame() {
-  stopTimer();
-  closeModal();
+  stopTimer(); closeModal();
   state.scores = { A: 0, B: 0 };
   state.currentTeam = 'A';
-  state.currentSlotId = null;
-  state.currentQuestion = null;
-  state.currentBet = 0;
-  state.phase = 'idle';
-  state.gameOver = false;
-  state.isSuddenDeath = false;
-  state.isRevealed = false;
-  state.timer = TIMER_SECONDS;
-  state.answeredCount = 0;
-  state._sdQuestion = null;
-  state._sdTeam = null;
+  state.currentSlotId = null; state.currentQuestion = null; state.currentBet = 0;
+  state.modalPhase = null; state.gameOver = false; state.isRevealed = false;
+  state.timer = TIMER_SECONDS; state.answeredCount = 0; state._sdQ = null;
   dom.suddenDeathArea.classList.add('hidden');
-  buildSlots();
-  renderBoard();
-  renderScores();
-  updateTurnUI();
-  dom.progress.textContent = `0 / 25 respondidas`;
+  buildSlots(); renderBoard(); renderScores(); updateTurnUI();
+}
+
+function initGame() {
+  buildSlots(); renderBoard(); renderScores(); updateTurnUI();
 }
 
 // ═══════════════════════════════════════════════════════════════
 //  WIRING
 // ═══════════════════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', () => {
-  // Manual score buttons
-  document.querySelectorAll('[data-team]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const team = btn.dataset.team.toUpperCase();
-      const pts = parseInt(btn.dataset.pts);
-      addScore(team, pts);
-    });
-  });
-
-  // Reset
-  dom.btnReset.addEventListener('click', () => {
-    if (confirm('¿Reiniciar el juego? Se perderán todos los puntajes.')) resetGame();
-  });
-
-  // Sudden death
-  dom.btnDesempate.addEventListener('click', startSuddenDeath);
-
-  // Close modal on backdrop click
-  dom.backdrop.addEventListener('click', () => {
-    if (state.phase === 'betting') closeModal();
-  });
-
-  // Close modal on Escape
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && state.phase === 'betting' && !dom.modal.classList.contains('hidden')) closeModal();
-  });
-
-  // Init
-  buildSlots();
-  renderBoard();
-  renderScores();
-  updateTurnUI();
+dom.btnStart.addEventListener('click', goToBoard);
+dom.btnReset.addEventListener('click', () => { if (confirm('¿Reiniciar el juego?')) resetGame(); });
+dom.btnDesempate.addEventListener('click', startSuddenDeath);
+dom.backdrop.addEventListener('click', () => { if (state.modalPhase === 'betting') closeModal(); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && state.modalPhase === 'betting' && !dom.modal.classList.contains('hidden')) closeModal();
+});
+[dom.inputA, dom.inputB].forEach(inp => {
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') goToBoard(); });
 });
 
-// Expose for inline onclick
+// Manual score buttons
+document.querySelectorAll('[data-team]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    addScore(btn.dataset.team.toUpperCase(), parseInt(btn.dataset.pts));
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════
+//  EXPOSE for inline onclick
+// ═══════════════════════════════════════════════════════════════
 window.handleSlotClick = handleSlotClick;
 window.selectBet = selectBet;
 window.revealOptions = revealOptions;
@@ -798,8 +955,13 @@ window.handleAnswer = handleAnswer;
 window.continueGame = continueGame;
 window.closeModal = closeModal;
 window.startSuddenDeath = startSuddenDeath;
-window.handleSuddenDeathAnswer = handleSuddenDeathAnswer;
+window.handleSdAnswer = handleSdAnswer;
 window.resetGame = resetGame;
+window.changeAnswer = changeAnswer;
+
+// ═══════════════════════════════════════════════════════════════
+//  INIT — start at welcome (board loads on click)
+// ═══════════════════════════════════════════════════════════════
 </script>
 </body>
 </html>
